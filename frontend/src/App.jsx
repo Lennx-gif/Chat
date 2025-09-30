@@ -9,6 +9,7 @@ import { useAuthStore } from "./store/useAuthStore.js";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
 import { Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 
 const App = () => {
@@ -38,6 +39,7 @@ const App = () => {
         <Route path="/profile" element={authUser ? <ProfilePage/> : <Navigate to="/login"/>}/>
 
       </Routes>
+      <Toaster/>
     </div>
     
   )
