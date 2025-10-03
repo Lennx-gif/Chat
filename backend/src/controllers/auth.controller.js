@@ -4,8 +4,9 @@ import { generateToken } from "../lib/utils.js";
 import cloudinary from "../lib/cloudinary.js";  
 
 
+
 export const signup = async(req,res) => {
-    const {fullName, email, password} = req.body;
+    const {email, fullName, password} = req.body;
     // Validate the input   
     try {
         if(!fullName || !email || !password) {

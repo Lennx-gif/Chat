@@ -1,37 +1,46 @@
 import { useState } from 'react';
-import { EyeIcon, EyeOff, Link, Link2, Loader, Mail, MessageSquare, User } from 'lucide-react';
+import { EyeOff, Link,  Loader, Mail, MailIcon, MessageSquare, User } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore.js'; // Adjust the import path as necessary
 import { Lock } from 'lucide-react';
 import { Eye } from 'lucide-react';
 import AuthImagePattern from  '../components/AuthImagePattern.jsx'; // Adjust the import path as necessary
-import { Links } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+;
 
 const SignUpPage = () => {
   // This is a placeholder component for the SignUp page
   // You can add your sign-up form and logic here
   const [showPassword, setShowPassword] = useState(false);
   const [formData,setFormData] = useState({
-    fullname: '',
+    fullName: '',
     email: '',
-    password: '',
-    confirmPassword: ''
+    password: ''
   });
 
-  const isSigningUp = useAuthStore((state) => state.isSigningUp);
+  const {signup, isSigningUp} = useAuthStore();
 
   const validateForm = ()=>{
-    if (!formData.fullname.trim()) return toast.error("Full name is required");
+    if (!formData.fullName.trim()) return toast.error("Full name is required");
     if (!formData.email.trim()) return toast.error("Email is required");
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) return toast.error("Invalid email address");
-    if (formData.password.length < 6) return toast.error("Password must be at least 6 characters long");
-    if (formData.password !== formData.confirmPassword) return toast.error("Passwords do not match");
+    if (!/\S+@\S+\.\S+/.test(formData.email)) return toast.error("Email is invalid");
+    if (!formData.password) return toast.error("Password is required");
+    if (formData.password.length < 6) return toast.error("Password must be at least 6 characters");
+
     return true;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const success = validateForm()
+    if (success ===true){
+      const result = signup(formData);
+      if (result?.success){
+        toast.success("Signup successful! You can now log in.");
+      }
+      
+    };
+    
   };
 
 
@@ -65,7 +74,7 @@ const SignUpPage = () => {
               placeholder='Enter your full name'
               className='input input-bordered w-full pl-2 inset-x-6 '
               value={formData.fullname}
-              onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
               required
             />
           </div>
@@ -136,9 +145,6 @@ const SignUpPage = () => {
         <div className="text-center flex flex-col gap-2 mt-4 items-center">
           <p className='text-base-content/60'>
           Already have an account?{" "}
-          <Link2 to="/login" className="link link-primary">
-            Sign in
-          </Link2>
           <a href="/login" className='text-primary hover:underline'>Log in</a>
           </p>
         </div>
