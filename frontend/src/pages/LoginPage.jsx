@@ -23,7 +23,7 @@ const LoginPage = () => {
           <div className='flex flex-col items-center gap-2 group'>
             <div className='size-12 rounded-xl bg-primary/10 flex items-center justify-center
             group-hover:bg-primary/20 transition-colors'>
-              <MessageSquare className='size-6 text-primary'/>
+              <MessageSquare className='size-6 text-primary animate-pulse duration-75'/>
             </div>
             <h1 className='text-2xl font-semibold text-gray-800'>Create An Account</h1>
             <p className='text-gray-600 text-sm'>Get started with your free account.</p>
@@ -83,7 +83,7 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <button type='submit' className='btn btn-primary w-full' disabled={isLoggingIn}>
+          <button type='submit' className='items-center-safe ml-5  btn btn-primary w-full' disabled={isLoggingIn}>
             {isLoggingIn ?(
               <>
               <Loader className='size-4 animate-spin' />
@@ -96,7 +96,7 @@ const LoginPage = () => {
           </button>
         </form>
 
-        <div className="text-center flex flex-col gap-2 mt-4 items-center">
+        <div className="text-center flex flex-col gap-2 mt-4 ml-6 items-center">
           <p className='text-base-content/60'>
           Don't have  an account?{" "}
           <Link to="/signup" className="link link-primary font-medium flex items-center justify-center">

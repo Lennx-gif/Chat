@@ -129,7 +129,7 @@ const SignUpPage = () => {
             </div>
           </div>
 
-          <button type='submit' className='btn btn-primary w-full' disabled={isSigningUp}>
+          <button type='submit' className='ml-5 btn btn-primary w-full' disabled={isSigningUp}>
             {isSigningUp ?(
               <>
               <Loader className='size-4 animate-spin' />
@@ -142,11 +142,12 @@ const SignUpPage = () => {
           </button>
         </form>
 
-        <div className="text-center flex flex-col gap-2 mt-4 items-center">
+        <div className="text-center flex flex-col gap-2 ml-8.5 mt-4 items-center">
           <p className='text-base-content/60'>
           Already have an account?{" "}
-          <a href="/login" className='text-primary hover:underline'>Log in</a>
           </p>
+          <a href="/login" className='text-primary hover:underline'>Log in</a>
+          
         </div>
       </div>
 
