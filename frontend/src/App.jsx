@@ -13,10 +13,10 @@ import { Toaster } from "react-hot-toast";
 
 
 const App = () => {
-  const {authUser,checkAuth,isCheckingAuth} = useAuthStore ;
+  const {authUser,checkAuth,isCheckingAuth} = useAuthStore();
   
   useEffect(() => {
-    checkAuth;
+    checkAuth();
   },[checkAuth]);
   console.log({authUser});
 
@@ -29,7 +29,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div data-theme="retrowave">
       <Navbar />
       <Routes>
         <Route path="/" element={ authUser ? <HomePage/> : <Navigate to="/login"/>}/>
