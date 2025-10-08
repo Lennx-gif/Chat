@@ -12,9 +12,9 @@ const ProfilePage = () => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = async() =>{
-      const baseImage= reader.result;
-      setSelectedImg(baseImage);
-      await updateProfile({profilePic:baseImage});
+      const base64Image= reader.result;
+      setSelectedImg(base64Image);
+      await updateProfile({profilePic:base64Image});
     }
   }
 
