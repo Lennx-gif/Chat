@@ -62,11 +62,11 @@ const SignUpPage = () => {
         <form onSubmit={handleSubmit} className='space-y-6'>
           <div className='form-control'>
             <label className='label '>
-              <span className='label-text font-medium'>Full Name</span>
+              <span className='label-text font-medium text-fuchsia-950'>Full Name</span>
             </label>
             <div className='relative'>
               <div className='relative inset-y-6 mr-0'>
-                <User className='size-5 text-base-content/40' />
+                <User className='size-5 text-base-black-content/40' />
               </div>
             </div>
             <input
@@ -82,11 +82,11 @@ const SignUpPage = () => {
 
           <div className='form-control'>
             <label className='label'>
-              <span className='label-text font-medium'>Email</span>
+              <span className='label-text font-medium text-fuchsia-950'>Email</span>
             </label>
             <div className='relative'>
               <div className='absolute inset-y-0 bottom-0  pl-0 flex items-center pointer-events-none'>
-                <Mail className='size-5 text-base-content/40 ' />
+                <Mail className='size-5 text-base-black-content/40' />
               </div>
               
               <input
@@ -103,11 +103,11 @@ const SignUpPage = () => {
 
           <div className='form-control'>
             <label className='label'>
-              <span className='label-text font-medium'>Password</span>
+              <span className='label-text font-medium text-fuchsia-950'>Password</span>
             </label>
             <div className='relative'>
               <div className='absolute inset-y-0 left-0 pl-0 flex items-center pointer-events-none'>
-                <Lock className='size-5 text-base-content/40' />
+                <Lock className='size-5 text-base-black-content/40' />
               </div>
 
               <input
@@ -143,7 +143,7 @@ const SignUpPage = () => {
         </form>
 
         <div className="text-center flex flex-col gap-2 ml-8.5 mt-4 items-center">
-          <p className='text-base-content/60'>
+          <p className='text-base-black-content/60'>
           Already have an account?{" "}
           </p>
           <a href="/login" className='text-primary hover:underline'>Log in</a>
