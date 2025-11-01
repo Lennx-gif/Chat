@@ -35,11 +35,12 @@ const SettingsPage = () => {
                 <div className="rounded-bg-neutral"></div>
               </div>
             </div>
-            <span className="text-[11px] font-medium truncate w-full text-center">
+            <span className="text-11px font-medium truncate w-full text-center">
               {t.charAt(0).toUpperCase() + t.slice(1)}
             </span>
           </button>
         })}
+        </div>
 
          {/* Preview Section */}
         <h3 className="text-lg font-semibold mb-3">Preview</h3>
@@ -55,7 +56,7 @@ const SettingsPage = () => {
                       J
                     </div>
                     <div>
-                      <h3 className="font-medium text-sm">John Doe</h3>
+                      <h3 className="font-medium text-sm">Lady Sanza</h3>
                       <p className="text-xs text-base-content/70">Online</p>
                     </div>
                   </div>
@@ -108,7 +109,6 @@ const SettingsPage = () => {
           </div>
         </div>
       </div>
-    </div>
   )
 }
 
