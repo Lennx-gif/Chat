@@ -1,7 +1,8 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../lib/utils.js";  
-import cloudinary from "../lib/cloudinary.js";  
+import cloudinary from "../lib/cloudinary.js";
+import { uploadImage } from "../lib/cloudinary.js";
 
 
 
@@ -103,26 +104,36 @@ export const logout = (req,res) => {
 }
 
 export const updateProfile = async (req, res) => {
-    try {
-        const {profilePic} = req.body;
-        const userId = req.user._id;
+  try {
+    const userId = req.user.id; // or however you get user id from protectRoute
+    const { profilePic } = req.body; // expect base64 or image url
 
-        if (!profilePic){
-            return res.status(400).json({message: "Please provide a profile picture"});
-        }
-        // Find the user by ID and update the profile picture
-        const uploadResponse = await cloudinary.uploader.upload(profilePic);
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { profilePic: uploadResponse.secure_url },
-            { new: true }
-        );
-
-        res.status(200).json(updatedUser)
-    } catch (error) {
-        console.log("Error in updateProfile controller",error.message);
-        res.status(500).json({message: "Internal server error"});
+    // upload only if a new image was provided
+    let secureUrl = profilePic;
+    if (profilePic && profilePic.startsWith("data:")) {
+      secureUrl = await uploadImage(profilePic); // uploadImage returns secure_url
     }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.profilePic = secureUrl || user.profilePic;
+    
+
+    // return updated user (omit sensitive fields)
+    const safeUser = {
+      id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePic: user.profilePic,
+      createdAt: user.createdAt
+    };
+
+    return res.json(safeUser);
+  } catch (err) {
+    console.error("Error in updateProfile:", err);
+    return res.status(500).json({ message: "Error updating profile" });
+  }
 };  
 
 export const checkAuth = (req,res) => {
