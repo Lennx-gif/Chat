@@ -3,3 +3,24 @@
     themes: all ;
 }
 
+/* View Transition Reveal Animation */
+
+@keyframes reveal {
+  from {
+    clip-path: circle(0px at calc(var(--clip-x) * 1px) calc(var(--clip-y) * 1px));
+  }
+  to {
+    clip-path: circle(calc(var(--clip-radius) * 1px) at calc(var(--clip-x) * 1px) calc(var(--clip-y) * 1px));
+  }
+}
+
+::view-transition-new(root) {
+  animation: reveal 0.5s ease-in-out;
+  /* Mix-blend-mode can create a smoother color transition */
+  mix-blend-mode: normal; 
+}
+
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}

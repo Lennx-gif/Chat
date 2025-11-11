@@ -3,15 +3,52 @@ import { THEMES } from "../constants/index.js";
 import { Send } from "lucide-react";
 
 const PREVIEW_MESSAGES = [
-  {id:1,content:"Hello, how are you?",sender:"Alice",timestamp:"2023-10-01 10:00"},
-  {id:2,content:"I'm good, thanks! And you?",sender:"Bob",timestamp:"2023-10-01 10:01"},
-  {id:3,content:"Doing well, just working on a project.",sender:"Alice",timestamp:"2023-10-01 10:02"},
+  {id:1,content:"Hello, how are you?", isSent: false},
+  {id:2,content:"I'm good, thanks! And you?", isSent: true},
+  {id:3,content:"Doing well, just working on a project.", isSent: false},
 ];
 
 
 
 const SettingsPage = () => {
   const {theme, setTheme} = useThemeStore();
+
+  const handleThemeChange = (e, newTheme) => {
+    // Fallback for browsers that don't support the View Transitions API
+    if (!document.startViewTransition) {
+      setTheme(newTheme);
+      return;
+    }
+
+    const x = e.clientX;
+    const y = e.clientY;
+
+    // Get the distance to the furthest corner
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    // Start the transition
+    const transition = document.startViewTransition(() => {
+      setTheme(newTheme);
+    });
+
+    // Pass click coordinates and radius to CSS via custom properties
+    // and clean up the class after the transition is finished.
+    transition.ready.then(() => {
+      document.documentElement.style.setProperty("--clip-x", x);
+      document.documentElement.style.setProperty("--clip-y", y);
+      document.documentElement.style.setProperty("--clip-radius", endRadius);
+      
+      transition.finished.finally(() => {
+        document.documentElement.style.removeProperty("--clip-x");
+        document.documentElement.style.removeProperty("--clip-y");
+        document.documentElement.style.removeProperty("--clip-radius");
+      });
+    });
+  };
+
   return (
     <div className="h-screen container mx-auto px-4 pt-20 max-w-5xl">
       <div className="space-y-6">
@@ -26,7 +63,7 @@ const SettingsPage = () => {
             group flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors
             ${theme === t ? "bg-base-200" : "hover:bg-base-200/50"}
           `}
-          onClick={() => setTheme(t)}>
+          onClick={(e) => handleThemeChange(e, t)}>
             <div className="relative h-8 w-full rounded-md overflow-hidden" data-theme={t}>
               <div className="absolute inset-0 grid grid-cols-4 gap-px p-1">
                 <div className="rounded-bg-primary"></div>
