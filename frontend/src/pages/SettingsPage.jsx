@@ -19,7 +19,7 @@ const SettingsPage = () => {
         <p className="text-sm text-base-content/70">Choose a theme for your chat interface</p>
       </div>
       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
-        {THEMES.map((t)=>{
+        {THEMES.map((t) => (
           <button
           key={t}
           className={`
@@ -39,7 +39,7 @@ const SettingsPage = () => {
               {t.charAt(0).toUpperCase() + t.slice(1)}
             </span>
           </button>
-        })}
+        ))}
         </div>
 
          {/* Preview Section */}
