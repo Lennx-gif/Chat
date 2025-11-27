@@ -5,11 +5,12 @@ import authRoutes from "./routes/auth.js"
 import messageRoutes from "./routes/message.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { server, app} from "./lib/socket.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
 
-const app = express();
+
 app.use(express.json({
     limit:"50mb"
 }));
@@ -21,9 +22,9 @@ app.use(cors({
 }));
 
 app.use("/api/auth",authRoutes);
-app.use("/api/message",messageRoutes);
+app.use("/api/messages",messageRoutes);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log("Server is running on port:"+PORT);
     connectDB();
 });
