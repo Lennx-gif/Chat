@@ -1,8 +1,14 @@
 import express from "express";
+import rateLimit from "express-rate-limit";
 
 import { login, logout, signup, updateProfile , checkAuth} from "../controllers/auth.controller.js";
 import { protectRoute } from "../middleware/protect.js";
 const router = express.Router();
+
+const updateProfileLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // limit each IP to 20 profile update requests per window
+});
 
 router.post("/signup",signup);
 
@@ -10,7 +16,7 @@ router.post("/login",login);
 
 router.post("/logout", logout);
 
-router.put("/update-profile",protectRoute,updateProfile);
+router.put("/update-profile", updateProfileLimiter, protectRoute, updateProfile);
 
 router.get("/check",protectRoute,checkAuth); 
 export default router;
