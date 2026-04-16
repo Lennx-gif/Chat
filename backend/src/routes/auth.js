@@ -10,7 +10,12 @@ const updateProfileLimiter = rateLimit({
   max: 20, // limit each IP to 20 profile update requests per window
 });
 
-router.post("/signup",signup);
+const signupLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // limit each IP to 10 signup requests per window
+});
+
+router.post("/signup", signupLimiter, signup);
 
 router.post("/login",login);
 
