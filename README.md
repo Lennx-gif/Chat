@@ -2,7 +2,43 @@
 
 A lightweight realtime chat application with a React + Vite frontend and a Node/Express backend. Features user auth, messaging, Cloudinary image uploads, and WebSockets for live updates.
 
-**Quick Start**
+## Branching Strategy
+
+This project uses **separate deployment branches** for backend and frontend services:
+
+- **`main`** — Unified reference branch with both services (backend/ and frontend/ directories). Use for architecture overview and syncing across services.
+- **`backend`** — Backend service only, with code at repository root. Deploy from this branch for backend-only changes and independent backend release cycles.
+- **`frontend`** — Frontend service only, with code at repository root. Deploy from this branch for frontend-only changes and independent frontend release cycles.
+
+### Development Workflow
+
+1. **For backend changes:** Create a feature branch from `backend`, make changes, then merge back to `backend`. Optionally sync to `main`.
+   ```bash
+   git checkout backend
+   git checkout -b feature/my-backend-feature
+   # ... make changes ...
+   git commit -m "description"
+   git push origin feature/my-backend-feature
+   # Create PR to backend
+   ```
+
+2. **For frontend changes:** Create a feature branch from `frontend`, make changes, then merge back to `frontend`. Optionally sync to `main`.
+   ```bash
+   git checkout frontend
+   git checkout -b feature/my-frontend-feature
+   # ... make changes ...
+   git commit -m "description"
+   git push origin feature/my-frontend-feature
+   # Create PR to frontend
+   ```
+
+3. **To sync services to `main`:** Merge either `backend` or `frontend` into `main` when ready for a unified release.
+
+---
+
+## Quick Start (on any branch)
+
+### On `main` branch (with both services):
 - **Install dependencies:**
 
 ```bash
@@ -34,6 +70,18 @@ cd backend && npm run dev
 
 # Start frontend (from repository root or frontend folder)
 cd frontend && npm run dev
+```
+
+### On `backend` branch (backend only at root):
+```bash
+npm install
+npm run dev
+```
+
+### On `frontend` branch (frontend only at root):
+```bash
+npm install
+npm run dev
 ```
 
 **Project Structure (high level)**
