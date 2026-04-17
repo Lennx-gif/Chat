@@ -15,9 +15,14 @@ const signupLimiter = rateLimit({
   max: 10, // limit each IP to 10 signup requests per window
 });
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // limit each IP to 10 login requests per window
+});
+
 router.post("/signup", signupLimiter, signup);
 
-router.post("/login",login);
+router.post("/login", loginLimiter, login);
 
 router.post("/logout", logout);
 
