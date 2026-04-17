@@ -1,8 +1,10 @@
 import { useState } from "react"
 import { useAuthStore } from "../store/useAuthStore";
-import { Lock, Eye, EyeOff, User, Mail, MessageSquare, Loader } from "lucide-react";
+import { Lock, Eye, EyeOff, User, Mail, MessageSquare, Loader, Palette } from "lucide-react";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { Link } from "react-router-dom";
+import { useThemeStore } from "../store/useThemeStore";
+import { THEMES } from "../constants/index.js";
 
 const LoginPage = () => {
   const[showPassword,setShowPassword] = useState(false);
@@ -11,22 +13,76 @@ const LoginPage = () => {
     password:""
   });
   const {login,isLoggingIn} = useAuthStore();
+  const {theme, setTheme} = useThemeStore();
+  const [showThemePicker, setShowThemePicker] = useState(false);
   const handleSubmit = async(e) => {
     e.preventDefault();
     login(formData);
   }
+  const handleThemeChange = (newTheme) => {
+    if (!document.startViewTransition) {
+      setTheme(newTheme);
+      return;
+    }
+
+    const transition = document.startViewTransition(() => {
+      setTheme(newTheme);
+    });
+
+    transition.ready.then(() => {
+      transition.finished.finally(() => {
+        setShowThemePicker(false);
+      });
+    });
+  };
+
   return (
      <div className='min-h-screen grid lg:grid-cols-2'>
       
-      <div className='flex flex-col justify-center items-center p-6 bg-gray-100 sm:p-12'>
+      <div className='flex flex-col justify-center items-center p-6 bg-base-100 sm:p-12 relative'>
+        {/* Theme Picker Button */}
+        <div className='absolute top-4 right-4'>
+          <button
+            onClick={() => setShowThemePicker(!showThemePicker)}
+            className='btn btn-ghost btn-sm gap-2'
+            title='Change theme'>
+            <Palette className='size-5' />
+          </button>
+
+          {/* Theme Dropdown */}
+          {showThemePicker && (
+            <div className='absolute top-12 right-0 bg-base-100 border border-base-300 rounded-lg shadow-lg p-3 grid grid-cols-4 gap-2 z-50'>
+              {THEMES.map((t) => (
+                <button
+                  key={t}
+                  className={`
+                    group flex flex-col items-center gap-1 p-2 rounded-md transition-colors
+                    ${theme === t ? "bg-base-300 ring-2 ring-primary" : "hover:bg-base-200"}
+                  `}
+                  onClick={() => handleThemeChange(t)}
+                  title={t}>
+                  <div className="relative h-6 w-6 rounded-sm overflow-hidden" data-theme={t}>
+                    <div className="absolute inset-0 grid grid-cols-2 gap-px p-0.5">
+                      <div className="rounded-sm bg-primary"></div>
+                      <div className="rounded-sm bg-secondary"></div>
+                      <div className="rounded-sm bg-accent"></div>
+                      <div className="rounded-sm bg-neutral"></div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div className='w-full max-w-md space-y-8'>
           <div className='flex flex-col items-center gap-2 group'>
             <div className='size-12 rounded-xl bg-primary/10 flex items-center justify-center
             group-hover:bg-primary/20 transition-colors'>
               <MessageSquare className='size-6 text-primary animate-pulse duration-75'/>
             </div>
-            <h1 className='text-2xl font-semibold text-gray-800'>Create An Account</h1>
-            <p className='text-gray-600 text-sm'>Get started with your free account.</p>
+            <h1 className='text-2xl font-semibold'>Create An Account</h1>
+            <p className='text-base-content/60 text-sm'>Get started with your free account.</p>
           </div>
 
         </div>

@@ -1,5 +1,5 @@
 import { Routes,Route } from "react-router-dom";
-import Navbar from "./components/Navbar.jsx";
+import AppHeader from "./components/AppHeader.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
@@ -32,7 +32,7 @@ const App = () => {
 
   return (
     <div data-theme={theme}>
-      <Navbar />
+      <AppHeader />
       <Routes>
         <Route path="/" element={ authUser ? <HomePage/> : <Navigate to="/login"/>}/>
         <Route path="/signup" element={!authUser ? <SignUpPage/>: <Navigate to="/"/>}/>
