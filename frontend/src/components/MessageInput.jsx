@@ -4,8 +4,8 @@ import { Image, Send, X } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const MessageInput = () => {
-  const {text,setText} = useState("");
-  const{imagePreview,setImagePreview} = useState(null);
+  const [text,setText] = useState("");
+  const[imagePreview,setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
   const handleImageChange = (e) => {
     const file = e.target.files[0];

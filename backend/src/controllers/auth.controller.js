@@ -13,11 +13,14 @@ export const signup = async(req,res) => {
         if(!fullName || !email || !password) {
             return res.status(400).json({message: "Please fill all the fields"});
         }
+        if (typeof email !== "string") {
+            return res.status(400).json({message: "Invalid email"});
+        }
         if(password.length < 6) {
             return res.status(400).json({message: "Password must be at least 6 characters"});
         }
         // Check if the user already exists
-        const user = await User.findOne({email});
+        const user = await User.findOne({ email: { $eq: email } });
         if(user) {
             return res.status(400).json({message: "User already exists"});
         }
