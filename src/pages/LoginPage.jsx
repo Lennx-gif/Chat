@@ -51,24 +51,27 @@ const LoginPage = () => {
 
           {/* Theme Dropdown */}
           {showThemePicker && (
-            <div className='absolute top-12 right-0 bg-base-100 border border-base-300 rounded-lg shadow-lg p-3 grid grid-cols-4 gap-2 z-50'>
+            <div className='absolute top-12 right-0 bg-base-100 border border-base-300 rounded-lg shadow-2xl p-4 grid grid-cols-6 md:grid-cols-8 gap-3 z-50 w-auto max-h-96 overflow-y-auto'>
               {THEMES.map((t) => (
                 <button
                   key={t}
                   className={`
-                    group flex flex-col items-center gap-1 p-2 rounded-md transition-colors
-                    ${theme === t ? "bg-base-300 ring-2 ring-primary" : "hover:bg-base-200"}
+                    group flex flex-col items-center gap-1.5 p-3 rounded-lg transition-all
+                    ${theme === t ? "bg-base-300 ring-2 ring-primary scale-110" : "hover:bg-base-200 hover:scale-105"}
                   `}
                   onClick={() => handleThemeChange(t)}
                   title={t}>
-                  <div className="relative h-6 w-6 rounded-sm overflow-hidden" data-theme={t}>
-                    <div className="absolute inset-0 grid grid-cols-2 gap-px p-0.5">
-                      <div className="rounded-sm bg-primary"></div>
-                      <div className="rounded-sm bg-secondary"></div>
-                      <div className="rounded-sm bg-accent"></div>
-                      <div className="rounded-sm bg-neutral"></div>
+                  <div className="relative h-8 w-full rounded-md overflow-hidden" data-theme={t}>
+                    <div className="absolute inset-0 grid grid-cols-4 gap-px p-1">
+                      <div className="rounded-bg-primary"></div>
+                      <div className="rounded-bg-secondary"></div>
+                      <div className="rounded-bg-accent"></div>
+                      <div className="rounded-bg-neutral"></div>
                     </div>
                   </div>
+                  <span className="text-xs font-medium truncate w-full text-center">
+                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                  </span>
                 </button>
               ))}
             </div>
