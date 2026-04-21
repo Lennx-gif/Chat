@@ -24,3 +24,168 @@
   animation: none;
   mix-blend-mode: normal;
 }
+
+/* Glassmorphism & Auth Modal Styles */
+
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 0px rgba(var(--color-primary), 0);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(var(--color-primary), 0.2);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Utility animations */
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+.animate-slideInUp {
+  animation: slideInUp 0.5s ease-out;
+}
+
+.animate-slideInDown {
+  animation: slideInDown 0.5s ease-out;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-shake {
+  animation: shake 0.5s;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Glassmorphic elements */
+.glass {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl;
+}
+
+.glass-light {
+  @apply bg-white/5 backdrop-blur-sm border border-white/10;
+}
+
+.glass-dark {
+  @apply bg-black/20 backdrop-blur-lg border border-black/30;
+}
+
+/* Input enhancements */
+.input-glass {
+  @apply bg-base-100/50 backdrop-blur-sm border-2 border-base-300/50
+    focus:border-primary/60 focus:ring-2 focus:ring-primary/20
+    transition-all rounded-xl;
+}
+
+.input-floating {
+  @apply relative pt-6 pb-2;
+}
+
+.input-floating label {
+  @apply absolute left-4 text-xs font-medium text-primary pointer-events-none;
+}
+
+/* Button enhancements */
+.btn-glass {
+  @apply bg-base-100/50 backdrop-blur-sm border border-base-300/50
+    hover:bg-base-100/80 transition-all;
+}
+
+.btn-gradient {
+  @apply bg-gradient-to-r from-primary via-primary to-primary/80
+    hover:shadow-lg transition-all;
+}
+
+/* Form animations */
+.form-input-animated {
+  @apply transition-all duration-300;
+}
+
+.form-input-animated:focus {
+  @apply ring-2 ring-primary/30 ring-offset-1;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  @apply fixed inset-0 bg-black/30 backdrop-blur-sm;
+}
+
+/* Fade and slide transitions */
+.fade-enter {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.fade-exit {
+  animation: fadeOut 0.3s ease-out;
+}
+
+.slide-enter {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.slide-exit {
+  animation: slideOutDown 0.3s ease-in;
+}

@@ -1,24 +1,24 @@
-import { useState } from "react"
-import { useAuthStore } from "../store/useAuthStore";
-import { Lock, Eye, EyeOff, User, Mail, MessageSquare, Loader, Palette } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Palette } from "lucide-react";
 import AuthImagePattern from "../components/AuthImagePattern";
-import { Link } from "react-router-dom";
+import AuthModal from "../components/AuthModal";
 import { useThemeStore } from "../store/useThemeStore";
 import { THEMES } from "../constants/index.js";
+import { useAuthStore } from "../store/useAuthStore";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-  const[showPassword,setShowPassword] = useState(false);
-  const [formData,setFormData] = useState({
-    email:"",
-    password:""
-  });
-  const {login,isLoggingIn} = useAuthStore();
-  const {theme, setTheme} = useThemeStore();
   const [showThemePicker, setShowThemePicker] = useState(false);
-  const handleSubmit = async(e) => {
-    e.preventDefault();
-    login(formData);
-  }
+  const { theme, setTheme } = useThemeStore();
+  const { authUser } = useAuthStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authUser) {
+      navigate("/");
+    }
+  }, [authUser, navigate]);
+
   const handleThemeChange = (newTheme) => {
     if (!document.startViewTransition) {
       setTheme(newTheme);
@@ -37,8 +37,7 @@ const LoginPage = () => {
   };
 
   return (
-     <div className='min-h-screen grid lg:grid-cols-2'>
-      
+    <div className='min-h-screen grid lg:grid-cols-2'>
       <div className='flex flex-col justify-center items-center p-6 bg-base-100 sm:p-12 relative'>
         {/* Theme Picker Button */}
         <div className='absolute top-4 right-4'>
@@ -78,101 +77,18 @@ const LoginPage = () => {
           )}
         </div>
 
-        <div className='w-full max-w-md space-y-8'>
-          <div className='flex flex-col items-center gap-2 group'>
-            <div className='size-12 rounded-xl bg-primary/10 flex items-center justify-center
-            group-hover:bg-primary/20 transition-colors'>
-              <MessageSquare className='size-6 text-primary animate-pulse duration-75'/>
-            </div>
-            <h1 className='text-2xl font-semibold'>Create An Account</h1>
-            <p className='text-base-content/60 text-sm'>Get started with your free account.</p>
-          </div>
-
-        </div>
-        <form onSubmit={handleSubmit} className='space-y-6'>
-          
-          
-
-          <div className='form-control'>
-            <label className='label'>
-              <span className='label-text font-medium'>Email</span>
-            </label>
-            <div className='relative'>
-              <div className='absolute inset-y-0 bottom-0  pl-0 flex items-center pointer-events-none'>
-                <Mail className='size-5 text-base-content/40 ' />
-              </div>
-              
-              <input
-                type='text'
-                placeholder='Enter your email address'
-                className='input input-bordered w-full pl-2 inset-x-6'
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
-              />
-            </div>
-          </div>
-
-
-          <div className='form-control'>
-            <label className='label'>
-              <span className='label-text font-medium'>Password</span>
-            </label>
-            <div className='relative'>
-              <div className='absolute inset-y-0 left-0 pl-0 flex items-center pointer-events-none'>
-                <Lock className='size-5 text-base-content/40' />
-              </div>
-
-              <input
-              type={showPassword ? "text" : "password"}
-              className={'input input-bodered w-full pl-2 inset-x-6'}
-              placeholder='Password'
-              value={formData.password}
-              onChange={(e) => setFormData({...formData,password: e.target.value})}/>
-              <button
-              type='button'
-              className='absolute inset-y-3 right-0 pr-0 flex items-center'
-              onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ?(
-                  <EyeOff className='size-5 text-base-content/40'/>
-                ):(
-                  <Eye className='size-5 text-base-content/40'/>
-                )}
-              </button>
-            </div>
-          </div>
-
-          <button type='submit' className='items-center-safe ml-5  btn btn-primary w-full' disabled={isLoggingIn}>
-            {isLoggingIn ?(
-              <>
-              <Loader className='size-4 animate-spin' />
-              Loading...
-              </>
-              ):(
-                "Login"
-              )
-            }
-          </button>
-        </form>
-
-        <div className="text-center flex flex-col gap-2 mt-4 ml-6 items-center">
-          <p className='text-base-content/60'>
-          Don't have  an account?{" "}
-          <Link to="/signup" className="link link-primary font-medium flex items-center justify-center">
-            Sign up
-          </Link>
-          
-          </p>
+        {/* Centered Content */}
+        <div className='w-full flex items-center justify-center min-h-screen'>
+          <AuthModal isOpen={true} defaultMode="login" onClose={() => {}} />
         </div>
       </div>
 
-
       <AuthImagePattern 
         title='Join the Conversation'
-        subtitle='Connect with friends and family'
+        subtitle='Unlock meaningful connections with friends and loved ones'
       />
     </div>
-  )
+  );
 }
 
-export default LoginPage
+export default LoginPage;
