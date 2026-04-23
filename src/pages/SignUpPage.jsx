@@ -1,15 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Palette } from 'lucide-react';
+import { useEffect } from 'react';
 import AuthImagePattern from '../components/AuthImagePattern.jsx';
-import AuthModal from '../components/AuthModal';
-import { useThemeStore } from '../store/useThemeStore';
-import { THEMES } from '../constants/index.js';
+import SignupForm from '../components/SignupForm';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useNavigate } from 'react-router-dom';
 
 const SignUpPage = () => {
-  const [showThemePicker, setShowThemePicker] = useState(false);
-  const { theme, setTheme } = useThemeStore();
   const { authUser } = useAuthStore();
   const navigate = useNavigate();
 
@@ -19,73 +14,23 @@ const SignUpPage = () => {
     }
   }, [authUser, navigate]);
 
-  const handleThemeChange = (newTheme) => {
-    if (!document.startViewTransition) {
-      setTheme(newTheme);
-      return;
-    }
-
-    const transition = document.startViewTransition(() => {
-      setTheme(newTheme);
-    });
-
-    transition.ready.then(() => {
-      transition.finished.finally(() => {
-        setShowThemePicker(false);
-      });
-    });
-  };
-
   return (
-    <div className='min-h-screen grid lg:grid-cols-2'>
-      <div className='flex flex-col justify-center items-center p-6 bg-base-100 sm:p-12 relative'>
-        {/* Theme Picker Button */}
-        <div className='absolute top-4 right-4'>
-          <button
-            onClick={() => setShowThemePicker(!showThemePicker)}
-            className='btn btn-ghost btn-sm gap-2'
-            title='Change theme'>
-            <Palette className='size-5' />
-          </button>
-
-          {/* Theme Dropdown */}
-          {showThemePicker && (
-            <div className='absolute top-12 right-0 bg-base-100 border border-base-300 rounded-lg shadow-2xl p-4 grid grid-cols-6 md:grid-cols-8 gap-3 z-50 w-auto max-h-96 overflow-y-auto'>
-              {THEMES.map((t) => (
-                <button
-                  key={t}
-                  className={`
-                    group flex flex-col items-center gap-1.5 p-3 rounded-lg transition-all
-                    ${theme === t ? "bg-base-300 ring-2 ring-primary scale-110" : "hover:bg-base-200 hover:scale-105"}
-                  `}
-                  onClick={() => handleThemeChange(t)}
-                  title={t}>
-                  <div className="relative h-8 w-full rounded-md overflow-hidden" data-theme={t}>
-                    <div className="absolute inset-0 grid grid-cols-4 gap-px p-1">
-                      <div className="rounded-bg-primary"></div>
-                      <div className="rounded-bg-secondary"></div>
-                      <div className="rounded-bg-accent"></div>
-                      <div className="rounded-bg-neutral"></div>
-                    </div>
-                  </div>
-                  <span className="text-xs font-medium truncate w-full text-center">
-                    {t.charAt(0).toUpperCase() + t.slice(1)}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
+    <div className='min-h-screen grid lg:grid-cols-2 bg-white'>
+      <div className='relative flex flex-col justify-center items-center p-6 sm:p-12 bg-slate-50/50 pt-24 sm:pt-32 w-full'>
+        {/* Background decorative elements */}
+        <div className='absolute inset-0 overflow-hidden pointer-events-none'>
+          <div className='absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]' />
+          <div className='absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/5 rounded-full blur-[120px]' />
         </div>
 
-        {/* Centered Content */}
-        <div className='w-full flex items-center justify-center min-h-screen'>
-          <AuthModal isOpen={true} defaultMode="signup" onClose={() => {}} />
+        <div className='relative z-10 w-full flex justify-center'>
+          <SignupForm />
         </div>
       </div>
 
       <AuthImagePattern 
-        title='Join the Conversation'
-        subtitle='Unlock meaningful connections with friends and loved ones'
+        title='Connect Instantly'
+        subtitle='Real-time messaging with people who inspire you'
       />
     </div>
   );

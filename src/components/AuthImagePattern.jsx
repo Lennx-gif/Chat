@@ -1,136 +1,109 @@
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useState, useEffect, useCallback } from 'react';
+import { MessageSquare, Users, Video, Phone, Heart, Smile, Send, Share, Hash, AtSign, Bell, Bookmark } from 'lucide-react';
+
+const ICONS = [MessageSquare, Users, Video, Phone, Heart, Smile, Send, Share, Hash, AtSign, Bell, Bookmark];
 
 const AuthImagePattern = ({ title, subtitle }) => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
+  const [content, setContent] = useState([]);
+  const [isFlowing, setIsFlowing] = useState(false);
 
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.5,
-        ease: 'easeOut',
-      },
-    },
-  };
+  const generateContent = useCallback(() => {
+    return [...Array(9)].map((_, i) => ({
+      id: Math.random(),
+      type: i % 3 === 0 ? 'image' : 'icon',
+      Icon: ICONS[Math.floor(Math.random() * ICONS.length)],
+      src: '/user.png'
+    }));
+  }, []);
+
+  useEffect(() => {
+    setContent(generateContent());
+
+    const flowInterval = setInterval(() => {
+      setIsFlowing(true);
+      // Wait for the "forward" part of the flow to swap content
+      setTimeout(() => {
+        setContent(generateContent());
+        setIsFlowing(false);
+      }, 1500);
+    }, 6000);
+
+    return () => clearInterval(flowInterval);
+  }, [generateContent]);
 
   return (
-    <div className='hidden lg:flex items-center justify-center bg-gradient-to-br from-base-200 via-base-200 to-base-300 p-12 relative overflow-hidden'>
-      {/* Animated background elements */}
-      <div className='absolute inset-0 opacity-20'>
-        <motion.div
-          className='absolute top-10 left-10 w-72 h-72 bg-primary rounded-full mix-blend-multiply blur-3xl'
-          animate={{
-            x: [0, 100, 0],
-            y: [0, 50, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className='absolute bottom-10 right-10 w-72 h-72 bg-secondary rounded-full mix-blend-multiply blur-3xl'
-          animate={{
-            x: [0, -100, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 2,
-          }}
-        />
+    <div className='hidden lg:flex items-center justify-center bg-base-200/50 p-12 relative overflow-hidden'>
+      {/* Background Blobs */}
+      <div className='absolute inset-0 overflow-hidden pointer-events-none'>
+        <div className='absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[100px]' />
+        <div className='absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/10 rounded-full blur-[100px]' />
       </div>
 
-      <motion.div
-        className='max-w-md text-center relative z-10'
-        variants={containerVariants}
-        initial='hidden'
-        animate='visible'>
-        {/* Grid Pattern with Animation */}
-        <motion.div
-          className='grid grid-cols-3 gap-3 mb-8'
-          variants={containerVariants}>
-          {[...Array(9)].map((_, i) => (
-            <motion.div
-              key={i}
-              className='aspect-square rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-sm border border-primary/20 overflow-hidden'
-              variants={itemVariants}
-              whileHover={{
-                scale: 1.1,
-                boxShadow: '0 8px 16px rgba(var(--color-primary), 0.2)',
-              }}
-              transition={{
-                type: 'spring',
-                stiffness: 400,
-                damping: 10,
-              }}>
-              {/* Shimmer effect */}
+      <div className='max-w-md text-center relative z-10 flex flex-col items-center'>
+        {/* Plain Matrix Grid with Fluid Flow */}
+        <div className='grid grid-cols-3 gap-6 mb-16'>
+          <AnimatePresence mode='popLayout'>
+            {content.map((item, i) => (
               <motion.div
-                className='absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent'
-                animate={{
-                  x: ['-100%', '100%'],
+                key={item.id}
+                layout
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: isFlowing ? 1.1 : 1,
+                  z: isFlowing ? 50 : 0,
+                  y: 0
                 }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  delay: i * 0.1,
+                exit={{ opacity: 0, scale: 0.8, y: -20 }}
+                transition={{ 
+                  type: 'spring', 
+                  stiffness: 200, 
+                  damping: 25,
+                  delay: i * 0.05,
+                  duration: 0.8
                 }}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
+                className='relative size-24 rounded-3xl bg-base-100 border border-base-300 shadow-xl flex items-center justify-center overflow-hidden z-10'
+                whileHover={{
+                  scale: 1.2,
+                  zIndex: 50,
+                  boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+                }}>
+                
+                {/* Reflective Overlay */}
+                <motion.div 
+                  className='absolute inset-0 bg-gradient-to-tr from-transparent via-base-content/10 to-transparent -translate-x-full z-20'
+                  animate={{ x: ['150%', '-150%'] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "linear", delay: i * 0.3 }}
+                />
 
-        {/* Title */}
-        <motion.h2
-          className='text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60'
-          variants={itemVariants}
-          whileHover={{ scale: 1.05 }}>
-          {title}
-        </motion.h2>
+                <div className='relative z-10'>
+                  {item.type === 'image' ? (
+                    <div className='size-full p-2'>
+                      <img src={item.src} alt="User" className="size-full object-cover rounded-2xl bg-base-200" />
+                    </div>
+                  ) : (
+                    <div className='p-4 rounded-2xl bg-base-200'>
+                      <item.Icon className='size-8 text-primary' />
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
 
-        {/* Subtitle */}
-        <motion.p
-          className='text-base-content/60 leading-relaxed'
-          variants={itemVariants}>
-          {subtitle}
-        </motion.p>
+        <motion.h2 className='text-3xl font-bold mb-4 text-base-content'>{title}</motion.h2>
+        <motion.p className='text-base-content/60 text-sm font-medium leading-relaxed mb-10'>{subtitle}</motion.p>
 
-        {/* Decorative dots */}
-        <motion.div className='flex justify-center gap-2 mt-8'>
+        <div className='flex justify-center gap-2'>
           {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              className='w-2 h-2 rounded-full bg-primary'
-              animate={{
-                opacity: [0.3, 1, 0.3],
-                scale: [1, 1.2, 1],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                delay: i * 0.3,
-              }}
-            />
+            <div key={i} className={`w-2.5 h-2.5 rounded-full ${i === 0 ? 'bg-primary' : 'bg-primary/20'}`} />
           ))}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default AuthImagePattern;
-

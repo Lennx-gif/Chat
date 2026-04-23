@@ -12,124 +12,88 @@ const FloatingLabelInput = ({
   showPasswordToggle,
   isPasswordVisible,
   onPasswordToggle,
+  variant = 'light',
   required = false,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
-  const isFieldActive = isFocused || value;
+  const isGlass = variant === 'glass';
 
   return (
-    <div className='relative w-full'>
-      <motion.div
-        className='relative'
-        animate={{
-          y: isFocused || value ? -28 : 0,
-        }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}>
+    <div className='relative w-full mb-4'>
+      <div
+        className={`relative flex items-center transition-all duration-200 border rounded-xl overflow-hidden
+          ${
+            error
+              ? 'border-error bg-error/5'
+              : isFocused
+              ? 'border-primary ring-1 ring-primary/20 ' + (isGlass ? 'bg-base-100/60' : 'bg-base-100')
+              : isGlass
+              ? 'border-base-content/10 bg-base-content/5'
+              : 'border-base-300 bg-base-100/50'
+          }`}>
         
-        {/* Label */}
-        <motion.label
-          className={`absolute left-4 transition-all pointer-events-none font-medium ${
-            isFieldActive
-              ? 'text-sm text-primary scale-90 origin-left'
-              : 'text-base text-base-content/60'
-          }`}
-          animate={{
-            y: isFieldActive ? -32 : 0,
-            scale: isFieldActive ? 0.9 : 1,
-          }}
-          transition={{ duration: 0.2 }}>
-          {label}
-          {required && <span className='text-error ml-1'>*</span>}
-        </motion.label>
+        {/* Label and Input Container */}
+        <div className='flex-1 relative'>
+          {/* Label */}
+          <label
+            className={`absolute left-12 top-2 transition-all pointer-events-none font-medium text-[10px] uppercase tracking-wider
+              ${error ? 'text-error' : isFocused ? 'text-primary' : 'text-base-content/40'}`}>
+            {label}
+            {required && <span className='text-error ml-0.5'>*</span>}
+          </label>
 
-        {/* Input Container */}
-        <div
-          className='relative flex items-center'
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}>
-          
           {/* Icon */}
           {Icon && (
-            <motion.div
-              className={`absolute left-4 pointer-events-none transition-colors ${
-                isFieldActive ? 'text-primary' : 'text-base-content/40'
-              }`}
-              animate={{
-                scale: isFieldActive ? 1.1 : 1,
-              }}
-              transition={{ duration: 0.2 }}>
+            <div className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors
+              ${isFocused ? 'text-primary' : 'text-base-content/30'}`}>
               <Icon className='size-5' />
-            </motion.div>
+            </div>
           )}
 
           {/* Input Field */}
-          <motion.input
+          <input
             type={showPasswordToggle && isPasswordVisible ? 'text' : type}
-            placeholder={isFieldActive ? placeholder : ''}
+            placeholder={isFocused ? placeholder : ''}
             value={value}
             onChange={onChange}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            className={`w-full px-4 py-3 pl-12 bg-base-100/50 backdrop-blur-sm rounded-xl
-              border-2 transition-all outline-none
-              ${
-                error
-                  ? 'border-error/50 focus:border-error'
-                  : isFieldActive
-                  ? 'border-primary/60'
-                  : 'border-base-300'
-              }
-              focus:ring-2 focus:ring-primary/20
-              placeholder:text-base-content/40
-              disabled:opacity-50 disabled:cursor-not-allowed
-            `}
+            className={`w-full px-4 pt-6 pb-2 pl-12 bg-transparent outline-none text-sm font-medium transition-colors text-base-content
+              placeholder:text-base-content/20`}
           />
-
-          {/* Password Toggle Button */}
-          {showPasswordToggle && (
-            <motion.button
-              type='button'
-              onClick={onPasswordToggle}
-              className='absolute right-4 text-base-content/50 hover:text-base-content/80 transition-colors'
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}>
-              {isPasswordVisible ? (
-                <svg className='size-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-                  <path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z' />
-                  <circle cx='12' cy='12' r='3' />
-                </svg>
-              ) : (
-                <svg className='size-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-                  <path d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24' />
-                  <line x1='1' y1='1' x2='23' y2='23' />
-                </svg>
-              )}
-            </motion.button>
-          )}
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <motion.p
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            className='text-error text-xs mt-1 pl-4 flex items-center gap-1'>
-            <span>⚠</span> {error}
-          </motion.p>
+        {/* Password Toggle Button */}
+        {showPasswordToggle && (
+          <button
+            type='button'
+            onClick={onPasswordToggle}
+            className={`px-4 transition-colors text-base-content/30 hover:text-base-content/60`}>
+            {isPasswordVisible ? (
+              <svg className='size-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+                <path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z' />
+                <circle cx='12' cy='12' r='3' />
+              </svg>
+            ) : (
+              <svg className='size-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+                <path d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24' />
+                <line x1='1' y1='1' x2='23' y2='23' />
+              </svg>
+            )}
+          </button>
         )}
-      </motion.div>
+      </div>
 
-      {/* Bottom Border Animation */}
-      <motion.div
-        className='absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-primary to-primary/0'
-        style={{ originX: 0 }}
-        animate={{
-          scaleX: isFieldActive ? 1 : 0,
-          opacity: isFieldActive ? 1 : 0,
-        }}
-        transition={{ duration: 0.3 }}
-      />
+      {/* Error Message */}
+      {error && (
+        <motion.p
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className='text-error text-[10px] mt-1 pl-4 font-medium'>
+          {error}
+        </motion.p>
+      )}
     </div>
   );
 };

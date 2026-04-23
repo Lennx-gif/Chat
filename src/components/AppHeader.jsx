@@ -1,115 +1,50 @@
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
-import { LogOut, Settings, User, Palette } from "lucide-react";
-import { useThemeStore } from "../store/useThemeStore";
-import { THEMES } from "../constants/index.js";
-import { useState } from "react";
+import { LogOut, Settings, User } from "lucide-react";
 
 const AppHeader = () => {
   const {logout,authUser} = useAuthStore();
-  const {theme, setTheme} = useThemeStore();
-  const [showThemePicker, setShowThemePicker] = useState(false);
-
-  const handleThemeChange = (newTheme) => {
-    if (!document.startViewTransition) {
-      setTheme(newTheme);
-      return;
-    }
-
-    const transition = document.startViewTransition(() => {
-      setTheme(newTheme);
-    });
-
-    transition.ready.then(() => {
-      transition.finished.finally(() => {
-        setShowThemePicker(false);
-      });
-    });
-  };
 
   return (
     <header
-      className="bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 backdrop-blur-lg bg-base-100/80"
+      className="bg-base-100/40 border-b border-base-content/5 fixed w-full top-0 z-40 backdrop-blur-xl"
     >
       <div className="container mx-auto px-4 h-16">
         <div className="flex items-center justify-between h-full">
           <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-all group">
-            {/* CAN Logo Design */}
-            <div className="relative h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-tr from-transparent via-white/10 to-transparent"></div>
-              <span className="text-lg font-black text-primary-content relative z-10">
-                CAN
-              </span>
+            {/* CAN Logo Design - matching the image */}
+            <div className="size-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+              <span className="text-sm font-black text-primary-content">CAN</span>
             </div>
             <div className="flex flex-col">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+              <h1 className="text-xl font-black text-base-content leading-none">
                 CAN
               </h1>
-              <p className="text-xs text-base-content/50 -mt-1 font-medium">Chat & Connect</p>
+              <p className="text-[10px] text-base-content/40 font-bold uppercase tracking-widest">Chat & Connect</p>
             </div>
           </Link>
 
           <div className="flex items-center gap-2">
-            {/* Theme Toggle */}
-            <div className="relative">
-              <button
-                onClick={() => setShowThemePicker(!showThemePicker)}
-                className="btn btn-ghost btn-sm gap-2"
-                title="Change theme"
-              >
-                <Palette className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs">Theme</span>
-              </button>
-
-              {showThemePicker && (
-                <div className="absolute top-12 right-0 bg-base-100 border border-base-300 rounded-lg shadow-2xl p-4 grid grid-cols-6 md:grid-cols-8 gap-3 z-50 w-auto">
-                  {THEMES.map((t) => (
-                    <button
-                      key={t}
-                      className={`
-                        group flex flex-col items-center gap-1.5 p-3 rounded-lg transition-all
-                        ${theme === t ? "bg-base-300 ring-2 ring-primary scale-110" : "hover:bg-base-200 hover:scale-105"}
-                      `}
-                      onClick={() => handleThemeChange(t)}
-                      title={t}
-                    >
-                      <div className="relative h-8 w-full rounded-md overflow-hidden" data-theme={t}>
-                        <div className="absolute inset-0 grid grid-cols-4 gap-px p-1">
-                          <div className="rounded-bg-primary"></div>
-                          <div className="rounded-bg-secondary"></div>
-                          <div className="rounded-bg-accent"></div>
-                          <div className="rounded-bg-neutral"></div>
-                        </div>
-                      </div>
-                      <span className="text-xs font-medium truncate w-full text-center">
-                        {t.charAt(0).toUpperCase() + t.slice(1)}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
             <Link
               to={"/settings"}
-              className="btn btn-sm gap-2 transition-colors"
+              className="btn btn-ghost btn-sm gap-2 text-base-content/60 hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
             >
               <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">Settings</span>
+              <span className="hidden sm:inline font-bold text-xs uppercase tracking-wider">Settings</span>
             </Link>
 
             {authUser && (
               <>
-                <Link to={"/profile"} className="btn btn-sm gap-2">
-                  <User className="size-5" />
-                  <span className="hidden sm:inline">Profile</span>
+                <Link to={"/profile"} className="btn btn-ghost btn-sm gap-2 text-base-content/60 hover:text-primary hover:bg-primary/5 rounded-xl transition-all">
+                  <User className="size-4" />
+                  <span className="hidden sm:inline font-bold text-xs uppercase tracking-wider">Profile</span>
                 </Link>
                 <button 
-                  className="btn btn-sm gap-2 transition-colors" 
+                  className="btn btn-ghost btn-sm gap-2 text-base-content/60 hover:text-error hover:bg-error/5 rounded-xl transition-all" 
                   onClick={logout}
                 >
-                  <LogOut className="size-5" />
-                  <span className="hidden sm:inline">Logout</span>
+                  <LogOut className="size-4" />
+                  <span className="hidden sm:inline font-bold text-xs uppercase tracking-wider">Logout</span>
                 </button>
               </>
             )}
