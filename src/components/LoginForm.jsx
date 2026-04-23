@@ -52,9 +52,10 @@ const LoginForm = () => {
 
   return (
     <motion.div
-      className='w-full max-w-md p-8 sm:p-10 bg-base-100/40 backdrop-blur-xl rounded-[2.5rem] border border-base-content/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden my-auto'
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      layoutId="auth-card"
+      className='w-full max-w-lg p-8 sm:p-12 bg-base-100/40 backdrop-blur-xl rounded-[2.5rem] border border-base-content/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden my-auto'
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}>
       
       {/* Header */}

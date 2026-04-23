@@ -22,6 +22,7 @@ const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [footerText, setFooterText] = useState("");
+  const [strength, setStrength] = useState(0);
 
   const { signup, isSigningUp } = useAuthStore();
 
@@ -31,6 +32,29 @@ const SignupForm = () => {
   }, []);
 
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
+
+  const calculateStrength = (pass) => {
+    let s = 0;
+    if (pass.length >= 6) s++;
+    if (/[A-Z]/.test(pass)) s++;
+    if (/[0-9]/.test(pass)) s++;
+    if (/[^A-Za-z0-9]/.test(pass)) s++;
+    return s;
+  };
+
+  const getStrengthColor = () => {
+    if (strength === 0) return 'bg-base-content/10';
+    if (strength === 1) return 'bg-error';
+    if (strength === 2) return 'bg-warning';
+    if (strength >= 3) return 'bg-success';
+    return 'bg-base-content/10';
+  };
+
+  const handlePasswordChange = (e) => {
+    const val = e.target.value;
+    setSignupData({ ...signupData, password: val });
+    setStrength(calculateStrength(val));
+  };
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
@@ -67,9 +91,10 @@ const SignupForm = () => {
 
   return (
     <motion.div
-      className='w-full max-w-md p-8 sm:p-10 bg-base-100/40 backdrop-blur-xl rounded-[2.5rem] border border-base-content/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden my-auto'
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      layoutId="auth-card"
+      className='w-full max-w-lg p-8 sm:p-12 bg-base-100/40 backdrop-blur-xl rounded-[2.5rem] border border-base-content/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden my-auto'
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}>
       
       {/* Header */}
@@ -131,9 +156,7 @@ const SignupForm = () => {
           label='Password'
           placeholder='••••••••••••••••'
           value={signupData.password}
-          onChange={(e) =>
-            setSignupData({ ...signupData, password: e.target.value })
-          }
+          onChange={handlePasswordChange}
           error={errors.password}
           icon={Lock}
           showPasswordToggle
@@ -143,9 +166,26 @@ const SignupForm = () => {
           required
         />
 
-        <div className='pl-4 py-1'>
-          <p className='text-[10px] text-primary font-bold uppercase tracking-wider flex items-center gap-2'>
-            <span>✓</span> At least 6 characters for security
+        {/* Strength Meter */}
+        <div className='px-1 space-y-2'>
+          <div className='flex gap-1 h-1'>
+            {[...Array(4)].map((_, i) => (
+              <motion.div
+                key={i}
+                className={`h-full flex-1 rounded-full transition-colors duration-500 ${
+                  i < strength ? getStrengthColor() : 'bg-base-content/10'
+                }`}
+              />
+            ))}
+          </div>
+          <p className='text-[10px] text-base-content/40 font-bold uppercase tracking-wider flex justify-between'>
+            <span>Security Strength</span>
+            <span className={strength >= 3 ? 'text-success' : ''}>
+              {strength === 0 && 'Too Short'}
+              {strength === 1 && 'Weak'}
+              {strength === 2 && 'Medium'}
+              {strength >= 3 && 'Strong'}
+            </span>
           </p>
         </div>
 
