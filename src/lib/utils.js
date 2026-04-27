@@ -5,7 +5,7 @@ export const generateToken =(userId, res) =>{
         expiresIn: '3d',
     });
     res.cookie('jwt', token, {
-        maxage: 3 * 24 * 60 * 60 * 1000, // 1 day
+        maxAge: 3 * 24 * 60 * 60 * 1000, // 1 day
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
