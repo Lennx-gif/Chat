@@ -28,30 +28,31 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="h-screen pl-20">
+    <div className="h-screen pt-20">
       <div className="max-w-3xl mx-auto p-4 py-8">
-        <div className="bg-base-300 rounded-xl p-6 space-y-8">
-          <h1 className="text-2xl font-semibold">Profile</h1>
-          <p className="mt-2">Your Profile Information</p>
+        <div className="bg-base-300 rounded-xl p-6 space-y-2 mb-8">
+          <h1 className="text-2xl font-bold">Profile</h1>
+          <p className="text-base-content/60">Your profile information and settings</p>
         </div>
-        {/*Avatar Upload Functionality*/}
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative">
+
+        {/* Avatar Upload Functionality */}
+        <div className="flex flex-col items-center gap-4 mb-8">
+          <div className="relative group">
             <img
               src={selectedImg || authUser.profilePic || "/user.png"}
               alt="Profile"
-              className="size-22 rounded-full object-cover border-4"
+              className="size-32 rounded-full object-cover border-4 border-base-300 shadow-xl"
             />
             <label
               htmlFor="avatar-upload"
-              className={`absolute bottom-8
-                         right-0 bg-base-content hover:scale-105 
-                         p-2 rounded-full cursor-pointer 
-                         transition-all duration-200 
+              className={`absolute bottom-0 right-0 
+                         bg-primary hover:scale-110 
+                         p-2.5 rounded-full cursor-pointer 
+                         transition-all duration-200 shadow-lg
                          ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
                       `}
             >
-              <Camera className="w-5 h-5 text-base-200"/>
+              <Camera className="w-5 h-5 text-primary-content"/>
               <input
                 type="file"
                 id="avatar-upload"
@@ -62,8 +63,8 @@ const ProfilePage = () => {
               />
             </label>
           </div>
-          <p className="text-sn text-zinc-408">
-            {isUpdatingProfile ? "Uploading..." : "Click the camera icon to change your profile picture."}
+          <p className="text-sm text-base-content/60">
+            {isUpdatingProfile ? "Uploading..." : "Click the camera icon to update your photo"}
           </p>
         </div>
 

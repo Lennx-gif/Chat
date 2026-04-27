@@ -8,13 +8,17 @@ import {useAuthStore} from '../store/useAuthStore';
 
 const ChatWindow = () => {
 
-  const {messages,getMessages,isLoadingMessages,selectedUser} = useChatStore();
+  const {messages,getMessages,isLoadingMessages,selectedUser,subscribeToMessages,unsubscribeFromMessages} = useChatStore();
   const {authUser} = useAuthStore();
 
   useEffect(() => {
-    if(!selectedUser._id) return;
+    if(!selectedUser?._id) return;
     getMessages(selectedUser._id);
-  }, [getMessages,selectedUser._id]);
+
+    subscribeToMessages();
+
+    return () => unsubscribeFromMessages();
+  }, [getMessages,selectedUser?._id,subscribeToMessages,unsubscribeFromMessages]);
   if (isLoadingMessages) {
     return( 
     <div className='flex-1 flex flex-col overflow-auto'>
