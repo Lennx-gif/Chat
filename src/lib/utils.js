@@ -5,10 +5,10 @@ export const generateToken =(userId, res) =>{
         expiresIn: '3d',
     });
     res.cookie('jwt', token, {
-        maxAge: 3 * 24 * 60 * 60 * 1000, // 1 day
+        maxAge: 3 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
     });
 
     return token;
