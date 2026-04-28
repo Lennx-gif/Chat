@@ -6,8 +6,8 @@ config();
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+    api_key: process.env.CLOUDINARY_CLOUD_API_KEY,
+    api_secret: process.env.CLOUDINARY_CLOUD_API_SECRET,
     secure: true   
 });
 
@@ -16,10 +16,10 @@ cloudinary.config({
  * Used consistently across all controllers instead of calling
  * cloudinary.uploader.upload directly.
  */
-export const uploadImage = async (filePath) => {
+export const uploadImage = async (filePath, folder = "profile_pictures") => {
     try {
         const result = await cloudinary.uploader.upload(filePath, {
-            folder: "profile_pictures",
+            folder: folder,
         });
         return result.secure_url; // Return the secure URL of the uploaded image
     } catch (error) {
