@@ -40,7 +40,7 @@ const ChatWindow = () => {
           >
             <div className='chat-image avatar'>
               <div className='size-10 rounded-full border'>
-                <img src={message.senderId === authUser._id ? authUser.profilePic || "/avatar.png": selectedUser.profilePic || "/avatar.png"} 
+                <img src={message.senderId === authUser._id ? authUser.profilePicture || "/avatar.png": selectedUser.profilePicture || "/avatar.png"} 
                 alt='Profile Pic' />
               </div>
             </div>

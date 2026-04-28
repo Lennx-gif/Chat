@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import {io} from 'socket.io-client';
 
 
-const BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://chat-production-b4fb.up.railway.app";
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5000" : (import.meta.env.VITE_BACKEND_URL || "https://chat-production-b4fb.up.railway.app");
 // Remove useNavigate import and usage in the store
 export const useAuthStore = create((set,get) => ({
     
@@ -98,22 +98,15 @@ export const useAuthStore = create((set,get) => ({
         const {authUser} = get();
         if (!authUser || get().socket?.connected) return;
 
-        const socket = io(BASE_URL);
-
-        socket.on("connect", () => {
-            console.log("Connected to socket server with ID:", socket.id);
-            if (authUser?._id) {
-                socket.emit("join", authUser._id);
-            }
+        const socket = io(BASE_URL, {
+            query: {
+                userId: authUser._id,
+            },
         });
+        socket.connect();
 
-        socket.on("onlineUsers", (users = []) => {
+        socket.on("getOnlineUsers", (users = []) => {
             set({onlineUsers: users});
-        });
-
-        socket.on("disconnect", () => {
-            console.log("Socket disconnected", socket.id);
-            set({onlineUsers: []});
         });
 
         set({socket});

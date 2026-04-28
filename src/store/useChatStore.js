@@ -17,12 +17,12 @@ export const useChatStore = create((set,get) => ({
         set({isLoadingUsers:true});   
         try{
             const response = await axiosInstance.get("/messages/users");
-            set({users:response.data.users});
+            // Backend returns { success: true, message: "...", data: [...] }
+            set({users: response.data.data || response.data});
         }
         catch(error){
             toast.error(error?.response?.data?.message || "Failed to load users");
             console.log("Error in getUsers",error);
-           // set({isLoadingUsers:false});
         }
         finally{
             set({isLoadingUsers:false});
@@ -30,14 +30,14 @@ export const useChatStore = create((set,get) => ({
     },
 
     getMessages: async(userId) =>{
-        set({isLoadingMessages:true,selectedUser:userId});
+        set({isLoadingMessages:true});
         try{
             const response = await axiosInstance.get(`/messages/${userId}`);
-            set({messages:response.data.messages});
+            // Backend returns the array directly or wrapped in data
+            set({messages: response.data.data || response.data});
         }
         catch(error){
             toast.error(error?.response?.data?.message || "Failed to load messages");
-            //console.log("Error in getMessages",error);
         }
         finally{
             set({isLoadingMessages:false});
@@ -47,7 +47,8 @@ export const useChatStore = create((set,get) => ({
         const {selectedUser,messages} = get();
         try {
             const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`,msgdata);
-            const newMessage = res.data.message;
+            // Backend returns the message object directly or wrapped in data
+            const newMessage = res.data.data || res.data;
             set({messages:[...messages,newMessage]});
             return newMessage;
         } catch (error) {

@@ -39,7 +39,7 @@ const ProfilePage = () => {
         <div className="flex flex-col items-center gap-4 mb-8">
           <div className="relative group">
             <img
-              src={selectedImg || authUser.profilePic || "/user.png"}
+              src={selectedImg || authUser.profilePicture || "/user.png"}
               alt="Profile"
               className="size-32 rounded-full object-cover border-4 border-base-300 shadow-xl"
             />
