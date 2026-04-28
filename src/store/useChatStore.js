@@ -29,12 +29,13 @@ export const useChatStore = create((set,get) => ({
         }
     },
 
-    getMessages: async(userId) =>{
+    getMessages: async(userToChatId) =>{
         set({isLoadingMessages:true});
         try{
-            const response = await axiosInstance.get(`/messages/${userId}`);
-            // Backend returns the array directly or wrapped in data
-            set({messages: response.data.data || response.data});
+            const response = await axiosInstance.get(`/messages/users/${userToChatId}`);
+            // Backend returns { success: true, message: "...", data: [...] } or just [...]
+            const messages = response.data.data || response.data;
+            set({messages: Array.isArray(messages) ? messages : []});
         }
         catch(error){
             toast.error(error?.response?.data?.message || "Failed to load messages");
