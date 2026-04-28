@@ -13,8 +13,15 @@ const MessageInput = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if(!file.type.startsWith("image/")){
+    if (!file) return;
+    
+    if (!file.type.startsWith("image/")) {
       toast.error("Please select a valid image file.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      toast.error("Image must be smaller than 5MB");
       return;
     }
 
@@ -22,12 +29,26 @@ const MessageInput = () => {
     reader.onloadend = () => {
       setImagePreview(reader.result);
     };
+    reader.onerror = () => {
+      toast.error("Failed to read image file");
+    };
     reader.readAsDataURL(file);
   };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if(!text.trim() && !imagePreview) return;
+    
+    // Validate input - prevent empty text and image messages
+    if (!text.trim() && !imagePreview) {
+      toast.error("Message cannot be empty");
+      return;
+    }
+
+    // Prevent message spam - text too long
+    if (text.length > 5000) {
+      toast.error("Message is too long (max 5000 characters)");
+      return;
+    }
 
     try {
       await sendMessage({

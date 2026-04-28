@@ -23,13 +23,16 @@ const ChatWindow = () => {
   }, [getMessages,selectedUser?._id,subscribeToMessages,unsubscribeFromMessages]);
 
   useEffect(() => {
-    if (scrollRef.current && messages) {
-      scrollRef.current.scrollTo({
-        top: scrollRef.current.scrollHeight,
-        behavior: "smooth",
-      });
+    if (scrollRef.current && messages && messages.length > 0) {
+      // Only auto-scroll on new messages, use small delay to allow DOM update
+      setTimeout(() => {
+        scrollRef.current?.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 0);
     }
-  }, [messages]);
+  }, [messages.length]); // Only trigger on length change, not full array
 
   if (isLoadingMessages) {
     return( 

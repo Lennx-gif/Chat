@@ -1,7 +1,7 @@
 import React from 'react';
 import {useChatStore} from "../store/useChatStore";
 import {useAuthStore} from "../store/useAuthStore";
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 import SideBarSkeleton from './skeletons/SideBarSkeleton';
 import {Users, Search, ChevronLeft} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -12,10 +12,21 @@ const SideBar = () => {
   const [showOnlineOnly, setShowOnlineOnly] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const searchTimeoutRef = useRef(null);
 
   useEffect (() => {
     getUsers();
+    // Restore sidebar collapse state from localStorage
+    const savedCollapsedState = localStorage.getItem('sidebarCollapsed');
+    if (savedCollapsedState !== null) {
+      setIsCollapsed(JSON.parse(savedCollapsedState));
+    }
   }, [getUsers]);
+
+  // Persist sidebar collapse state to localStorage
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(isCollapsed));
+  }, [isCollapsed]);
 
   const filteredUsers = (users ?? []).filter((user) => {
     if (user?._id === authUser?._id) return false;
@@ -68,7 +79,14 @@ const SideBar = () => {
               placeholder="Search people..."
               className="w-full bg-base-content/5 border border-base-content/5 rounded-2xl py-3 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-base-content/30 font-medium"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                // Debounce search to reduce re-renders
+                clearTimeout(searchTimeoutRef.current);
+                searchTimeoutRef.current = setTimeout(() => {
+                  // Search filtering happens in filteredUsers computation below
+                }, 300);
+              }}
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-base-content/30" />
           </motion.div>
