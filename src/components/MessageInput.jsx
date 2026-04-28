@@ -1,8 +1,9 @@
 import React from 'react'
 import { useState,useRef } from 'react';
-import { Image, Send, X } from 'lucide-react';
+import { Image, Send, X, Smile, Paperclip } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useChatStore } from '../store/useChatStore';
+import { motion, AnimatePresence } from 'motion/react';
 
 const MessageInput = () => {
   const [text,setText] = useState("");
@@ -50,37 +51,60 @@ const MessageInput = () => {
 
 
   return (
-    <div>
-        <div className="p-4 w-full">
-      {imagePreview && (
-        <div className="mb-3 flex items-center gap-2">
-          <div className="relative">
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="w-20 h-20 object-cover rounded-lg border border-zinc-700"
-            />
-            <button
-              onClick={removeMessageImage}
-              className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-base-300
-              flex items-center justify-center"
-              type="button"
-            >
-              <X className="size-3" />
-            </button>
-          </div>
-        </div>
-      )}
+    <div className="p-4 w-full bg-base-100/30 backdrop-blur-md border-t border-base-content/10">
+      <AnimatePresence>
+        {imagePreview && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="mb-4 flex items-center gap-2"
+          >
+            <div className="relative group">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="size-24 object-cover rounded-2xl border-2 border-primary/20 shadow-xl"
+              />
+              <button
+                onClick={removeMessageImage}
+                className="absolute -top-2 -right-2 size-6 rounded-full bg-error text-error-content
+                flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                type="button"
+              >
+                <X className="size-3.5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-        <div className="flex-1 flex gap-2">
+      <form onSubmit={handleSendMessage} className="flex items-center gap-3">
+        <div className="flex-1 flex items-center gap-2 bg-base-100/50 border border-base-content/10 rounded-2xl px-3 py-1.5 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+          <button
+            type="button"
+            className={`btn btn-ghost btn-sm btn-circle hover:bg-primary/10 transition-colors
+                     ${imagePreview ? "text-primary" : "text-base-content/40"}`}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Paperclip size={18} />
+          </button>
+          
           <input
             type="text"
-            className="w-full input input-bordered rounded-lg input-sm sm:input-md"
-            placeholder="Type a message..."
+            className="flex-1 bg-transparent border-none focus:outline-none text-sm py-2 placeholder:text-base-content/30"
+            placeholder="Type your message..."
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
+          
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm btn-circle text-base-content/40 hover:bg-primary/10 transition-colors"
+          >
+            <Smile size={18} />
+          </button>
+
           <input
             type="file"
             accept="image/*"
@@ -88,25 +112,18 @@ const MessageInput = () => {
             ref={fileInputRef}
             onChange={handleImageChange}
           />
-
-          <button
-            type="button"
-            className={`hidden sm:flex btn btn-circle
-                     ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Image size={20} />
-          </button>
         </div>
-        <button
+
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           type="submit"
-          className="btn btn-sm btn-circle"
+          className="size-11 rounded-2xl bg-primary text-primary-content flex items-center justify-center shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           disabled={!text.trim() && !imagePreview}
         >
-          <Send size={22} />
-        </button>
+          <Send size={18} className={text.trim() || imagePreview ? "animate-pulse-subtle" : ""} />
+        </motion.button>
       </form>
-      </div>
     </div>
   );};
 
