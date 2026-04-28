@@ -7,35 +7,34 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: [
+            "http://localhost:5173",
+            process.env.FRONTEND_URL
+        ].filter(Boolean),
         methods: ["GET", "POST"]
     }
 });
 
-const onlineUsers = new Set();
-const socketUserMap = new Map();
+export function getReceiverSocketId(userId) {
+    return userSocketMap[userId];
+}
+
+const userSocketMap = {}; // {userId: socketId}
 
 io.on("connection", (socket) => {
-    console.log("New client connected: " + socket.id);
+    console.log("A user connected", socket.id);
 
-    socket.on("join", (userId) => {
-        if (!userId) return;
-        onlineUsers.add(userId);
-        socketUserMap.set(socket.id, userId);
-        io.emit("onlineUsers", Array.from(onlineUsers));
-        console.log(`User ${userId} joined (socket ${socket.id}). Online count: ${onlineUsers.size}`);
-    });
+    const userId = socket.handshake.query.userId;
+    if (userId) userSocketMap[userId] = socket.id;
+
+    // io.emit() is used to send events to all the connected clients
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     socket.on("disconnect", () => {
-        const userId = socketUserMap.get(socket.id);
-        socketUserMap.delete(socket.id);
-        if (userId) {
-            onlineUsers.delete(userId);
-            io.emit("onlineUsers", Array.from(onlineUsers));
-            console.log(`User ${userId} disconnected (socket ${socket.id}). Online count: ${onlineUsers.size}`);
-        }
-        console.log("Client disconnected: " + socket.id);
+        console.log("A user disconnected", socket.id);
+        delete userSocketMap[userId];
+        io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });
 });
 
-export {io, server,app};
+export { io, app, server };

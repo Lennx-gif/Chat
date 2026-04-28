@@ -1,13 +1,13 @@
 import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
 import {connectDB} from "./lib/db.js";
 import authRoutes from "./routes/auth.js"
 import messageRoutes from "./routes/message.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { server, app} from "./lib/socket.js";
-
-dotenv.config();
 const PORT = process.env.PORT || 5000;
 
 
@@ -17,14 +17,17 @@ app.use(express.json({
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true,
+    origin: [
+        "http://localhost:5173",
+        process.env.FRONTEND_URL
+    ].filter(Boolean),
+    credentials: true,
 }));
 
 app.use("/api/auth",authRoutes);
 app.use("/api/messages",messageRoutes);
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
     console.log("Server is running on port:"+PORT);
     connectDB();
 });
