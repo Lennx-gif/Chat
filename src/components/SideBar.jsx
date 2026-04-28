@@ -3,7 +3,7 @@ import {useChatStore} from "../store/useChatStore";
 import {useAuthStore} from "../store/useAuthStore";
 import {useEffect} from "react";
 import SideBarSkeleton from './skeletons/SideBarSkeleton';
-import {Users, Search} from "lucide-react";
+import {Users, Search, ChevronLeft} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 const SideBar = () => {
@@ -11,6 +11,7 @@ const SideBar = () => {
   const {onlineUsers,authUser} = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
 
   useEffect (() => {
     getUsers();
@@ -27,103 +28,139 @@ const SideBar = () => {
     return <SideBarSkeleton/>;
   }
   return (
-    <aside className="h-full w-20 lg:w-72 border-r border-base-content/10 
-    flex flex-col transition-all duration-200 bg-base-100/20 backdrop-blur-md">
+    <aside className={`h-full flex flex-col transition-all duration-500 bg-base-100/10 backdrop-blur-2xl border-r border-base-content/5 relative z-20 pt-24 ${isCollapsed ? 'w-20' : 'w-80'}`}>
+      {/* Collapse Toggle */}
+      <button 
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute -right-3 top-28 size-6 rounded-full bg-primary text-primary-content flex items-center justify-center shadow-lg shadow-primary/20 z-30 hover:scale-110 transition-transform"
+      >
+        <motion.div animate={{ rotate: isCollapsed ? 180 : 0 }}>
+          <ChevronLeft size={14} />
+        </motion.div>
+      </button>
+
       {/* Header */}
-      <div className="border-b border-base-content/10 w-full p-5">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Users className="w-5 h-5 text-primary" />
+      <div className="p-6">
+        <div className={`flex items-center gap-3 mb-8 ${isCollapsed ? 'justify-center' : ''}`}>
+          <div className="size-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-inner">
+            <Users className="w-6 h-6 text-primary" />
           </div>
-          <span className="font-bold text-lg hidden lg:block tracking-tight">Contacts</span>
+          {!isCollapsed && (
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
+              <span className="font-black text-xl tracking-tighter">CONTACTS</span>
+              <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] opacity-70">Directory</p>
+            </motion.div>
+          )}
         </div>
 
         {/* Search Input */}
-        <div className="hidden lg:block mb-4 relative">
-          <input
-            type="text"
-            placeholder="Search contacts..."
-            className="w-full bg-base-100/50 border border-base-content/10 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-base-content/40"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-base-content/40" />
-        </div>
+        {!isCollapsed && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative mb-6"
+          >
+            <input
+              type="text"
+              placeholder="Search people..."
+              className="w-full bg-base-content/5 border border-base-content/5 rounded-2xl py-3 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-base-content/30 font-medium"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-base-content/30" />
+          </motion.div>
+        )}
 
         {/* Online Filter Toggle */}
-        <div className="mt-3 hidden lg:flex items-center justify-between">
+        <div className={`flex items-center justify-between ${isCollapsed ? 'hidden' : ''}`}>
           <label className="cursor-pointer flex items-center gap-2 group">
             <input
               type="checkbox"
               checked={showOnlineOnly}
               onChange={(e) => setShowOnlineOnly(e.target.checked)}
-              className="checkbox checkbox-xs checkbox-primary rounded-md opacity-70 group-hover:opacity-100 transition-opacity"
+              className="checkbox checkbox-xs checkbox-primary rounded-md border-base-content/20"
             />
-            <span className="text-xs font-bold text-base-content/50 uppercase tracking-widest group-hover:text-base-content/70 transition-colors">Only online</span>
+            <span className="text-[10px] font-black text-base-content/40 uppercase tracking-widest group-hover:text-base-content/60 transition-colors">Active Only</span>
           </label>
-          <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-            {onlineUsers.length - 1} online
-          </span>
+          <div className="flex items-center gap-1.5 bg-green-500/10 px-2 py-1 rounded-full border border-green-500/20">
+            <span className="size-1.5 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-[9px] font-black text-green-500 uppercase">{onlineUsers.length - 1}</span>
+          </div>
         </div>
       </div>
 
-      {/* Contacts */}
-      <div className="overflow-y-auto w-full py-4 space-y-1 px-2">
+      {/* Contacts List */}
+      <div className="overflow-y-auto w-full py-4 space-y-2 px-3 flex-1 scrollbar-none">
          <AnimatePresence mode="popLayout">
            {filteredUsers.map((user, index) => (
             <motion.button
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ delay: index * 0.05 }}
+              transition={{ delay: index * 0.03 }}
               key={user._id}
               onClick={() => setSelectedUser(user)}
               className={`
-                w-full p-3 flex items-center gap-3 rounded-2xl
-                transition-all duration-300 group
+                w-full p-3 flex items-center gap-4 rounded-[1.25rem]
+                transition-all duration-300 group relative overflow-hidden
                 ${selectedUser?._id === user._id 
-                  ? "bg-primary/10 ring-1 ring-primary/30 shadow-[0_0_20px_rgba(var(--color-primary),0.1)]" 
-                  : "hover:bg-base-content/5"}
+                  ? "bg-gradient-to-r from-primary/15 to-transparent border border-primary/20 shadow-lg shadow-primary/5" 
+                  : "hover:bg-base-content/5 border border-transparent"}
               `}
             >
-              <div className="relative mx-auto lg:mx-0">
+              {selectedUser?._id === user._id && (
+                <motion.div 
+                  layoutId="active-pill"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-full"
+                />
+              )}
+
+              <div className="relative flex-shrink-0">
                 <img
                   src={user.profilePicture || "/avatar.png"}
                   alt={user.fullName}
-                  className={`size-12 object-cover rounded-2xl transition-all duration-300 ${selectedUser?._id === user._id ? 'scale-110 shadow-lg' : 'group-hover:scale-105'}`}
+                  className={`size-11 object-cover rounded-[1rem] transition-all duration-500 ${selectedUser?._id === user._id ? 'scale-110 shadow-lg shadow-primary/20' : 'group-hover:scale-105'}`}
                 />
                 {onlineUsers.includes(user._id) && (
                   <span
-                    className="absolute -bottom-0.5 -right-0.5 size-3.5 bg-green-500 
-                    rounded-full ring-4 ring-base-100"
+                    className="absolute -bottom-1 -right-1 size-3.5 bg-green-500 
+                    rounded-full ring-4 ring-base-100 shadow-sm"
                   />
                 )}
               </div>
 
-              {/* User info - only visible on larger screens */}
-              <div className="hidden lg:block text-left min-w-0 flex-1">
-                <div className={`font-bold truncate ${selectedUser?._id === user._id ? 'text-primary' : 'text-base-content'}`}>
-                  {user.fullName}
+              {/* User info - only visible when not collapsed */}
+              {!isCollapsed && (
+                <div className="text-left min-w-0 flex-1">
+                  <div className={`font-black text-sm truncate tracking-tight ${selectedUser?._id === user._id ? 'text-primary' : 'text-base-content'}`}>
+                    {user.fullName}
+                  </div>
+                  <div className="text-[10px] text-base-content/40 font-bold uppercase tracking-wider mt-0.5">
+                    {onlineUsers.includes(user._id) ? (
+                      <span className="text-green-500/80 flex items-center gap-1">
+                        Online
+                      </span>
+                    ) : (
+                      "Offline"
+                    )}
+                  </div>
                 </div>
-                <div className="text-xs text-base-content/50 font-medium">
-                  {onlineUsers.includes(user._id) ? (
-                    <span className="text-green-500/80">Active now</span>
-                  ) : (
-                    "Away"
-                  )}
-                </div>
-              </div>
+              )}
             </motion.button>
           ))}
         </AnimatePresence>
 
-        {filteredUsers.length === 0 && (
+        {filteredUsers.length === 0 && !isCollapsed && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center text-base-content/40 py-10 px-4"
+            className="text-center text-base-content/20 py-20 px-6"
           >
-            <p className="text-sm font-medium">No contacts found</p>
+            <Search className="size-8 mx-auto mb-3 opacity-20" />
+            <p className="text-xs font-black uppercase tracking-[0.2em]">No results</p>
           </motion.div>
         )}
       </div>
