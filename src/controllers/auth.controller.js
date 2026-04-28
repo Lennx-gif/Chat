@@ -1,8 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../lib/utils.js";  
-import cloudinary from "../lib/cloudinary.js";
-import { uploadImage } from "../lib/cloudinary.js";
+import cloudinary, { uploadImage, deleteImage, extractPublicId } from "../lib/cloudinary.js";
 
 
 
@@ -25,13 +24,23 @@ export const signup = async(req,res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        // Upload profile picture if provided.
+        // We attempt the upload before creating the user so that a failed upload
+        // never results in a saved user with a missing/orphaned image.
         let profilePicture = "";
         if (profilePic) {
-            const uploadResponse = await cloudinary.uploader.upload(profilePic);
-            profilePicture = uploadResponse.secure_url;
+            // Defensive: extract and delete any pre-existing image at this URL
+            // (shouldn't happen on signup, but guards against edge cases)
+            const existingPublicId = extractPublicId(profilePic);
+            if (existingPublicId) {
+                await deleteImage(existingPublicId);
+            }
+
+            // Use the shared uploadImage utility for consistent error handling
+            profilePicture = await uploadImage(profilePic);
         }
 
-        // Create a new user
+        // Create a new user only after the upload has succeeded
         const newUser = new User({
             fullName,
             email,
@@ -118,10 +127,30 @@ export const updateProfile = async (req, res) => {
             return res.status(400).json({ message: "Profile pic is required" });
         }
 
-        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+        // Fetch the current user so we can clean up their old profile picture.
+        // We extract the public ID from the stored Cloudinary URL — this is
+        // necessary because cloudinary.uploader.destroy requires the public ID,
+        // not the full URL.
+        const currentUser = await User.findById(userId);
+        const oldPublicId = extractPublicId(currentUser?.profilePicture);
+
+        // Delete the old image BEFORE uploading the new one to avoid accumulating
+        // orphaned images in Cloudinary when users update their profile picture.
+        // A failed deletion is non-fatal: we log it and continue so the user's
+        // update is not blocked by a cleanup error.
+        if (oldPublicId) {
+            await deleteImage(oldPublicId);
+        }
+
+        // Use the shared uploadImage utility instead of calling
+        // cloudinary.uploader.upload directly. Only update the database if the
+        // upload succeeds — this prevents the user record from pointing at a
+        // non-existent image if the upload fails mid-way.
+        const newImageUrl = await uploadImage(profilePic);
+
         const updatedUser = await User.findByIdAndUpdate(
             userId,
-            { profilePicture: uploadResponse.secure_url },
+            { profilePicture: newImageUrl },
             { new: true }
         );
 
