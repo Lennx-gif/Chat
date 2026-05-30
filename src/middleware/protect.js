@@ -3,8 +3,12 @@ import User from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
 // Middleware to protect routes
 
-export const protectRoute = asyncHandler(async (req, res, next) => {;
-    const token = req.cookies.jwt;
+export const protectRoute = asyncHandler(async (req, res, next) => {
+    let token = req.cookies.jwt;
+    if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+        token = req.headers.authorization.split(" ")[1];
+    }
+
     if (!token) {
         return res.status(401).json({ message: "Not authorized, no token" });
     }

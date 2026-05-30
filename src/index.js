@@ -5,6 +5,7 @@ dotenv.config();
 import {connectDB} from "./lib/db.js";
 import authRoutes from "./routes/auth.js"
 import messageRoutes from "./routes/message.js";
+import userRoutes from "./routes/user.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { server, app} from "./lib/socket.js";
@@ -26,6 +27,7 @@ app.use(cors({
 
 app.use("/api/auth",authRoutes);
 app.use("/api/messages",messageRoutes);
+app.use("/api/users",userRoutes);
 
 server.listen(PORT, "0.0.0.0", () => {
     console.log("Server is running on port:"+PORT);

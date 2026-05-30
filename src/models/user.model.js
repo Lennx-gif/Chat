@@ -23,6 +23,13 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    chatList: {
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }],
+        default: []
+    }
     }, {
     timestamps: true,
 });

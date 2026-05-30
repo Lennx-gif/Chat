@@ -12,11 +12,14 @@ export const signup = async(req,res) => {
         if(!fullName || !email || !password) {
             return res.status(400).json({message: "Please fill all the fields"});
         }
+        
+        const normalizedEmail = email.toLowerCase().trim();
+        
         if(password.length < 6) {
             return res.status(400).json({message: "Password must be at least 6 characters"});
         }
         // Check if the user already exists
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: normalizedEmail });
         if(user) {
             return res.status(400).json({message: "User already exists"});
         }
@@ -43,7 +46,7 @@ export const signup = async(req,res) => {
         // Create a new user only after the upload has succeeded
         const newUser = new User({
             fullName,
-            email,
+            email: normalizedEmail,
             password:hashedPassword,
             profilePicture: profilePicture || undefined,
         });
@@ -74,8 +77,9 @@ export const login = (req,res) => {
     if(!email || !password) {
         return res.status(400).json({message: "Please fill all the fields"});
     }
+    const normalizedEmail = email.toLowerCase().trim();
     // Check if the user exists
-    User.findOne({email})
+    User.findOne({email: normalizedEmail})
         .then(async(user) => {
             if(!user) {
                 return res.status(400).json({message: "Invalid credentials"});
