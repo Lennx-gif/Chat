@@ -109,14 +109,19 @@ export const useChatStore = create((set,get) => ({
         if(socket) socket.off("newMessage");
     },
 
-    setSelectedUser: (userId) => {
+    setSelectedUser: (userOrId) => {
+        if (!userOrId) {
+            set({selectedUser: null});
+            return;
+        }
         const {users} = get();
-        // Validate user exists or is null (for deselection)
-        if(userId && !users.find(u => u._id === userId)) {
+        const userId = typeof userOrId === "object" ? userOrId._id : userOrId;
+        const userObj = typeof userOrId === "object" ? userOrId : users.find(u => u._id === userId);
+        if(!userObj) {
             console.warn(`User ${userId} not found in users list`);
             return;
         }
-        set({selectedUser: userId});
+        set({selectedUser: userObj});
     },
     
     getFilteredUsers: () => {
