@@ -1,3 +1,4 @@
 {
-    "peacock.affectPanelBorder": true
+    "peacock.affectPanelBorder": true,
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
