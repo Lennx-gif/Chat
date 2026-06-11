@@ -4,6 +4,7 @@ import { Loader, MessageSquare, Mail, Lock } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import FloatingLabelInput from './FloatingLabelInput';
 import { Link } from 'react-router-dom';
+import { Button } from './ui/Button';
 
 const FOOTER_TEXTS = [
   "New to Chat? Create an account now",
@@ -53,7 +54,7 @@ const LoginForm = () => {
   return (
     <motion.div
       layoutId="auth-card"
-      className='w-full max-w-lg p-8 sm:p-12 bg-base-100/40 backdrop-blur-xl rounded-[2.5rem] border border-base-content/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden my-auto'
+      className='w-full max-w-lg p-8 sm:p-12 bg-base-100/40 backdrop-blur-xl rounded-[3rem] border border-base-content/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden my-auto'
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}>
@@ -115,12 +116,10 @@ const LoginForm = () => {
           required
         />
 
-        <button
+        <Button
           type='submit'
           disabled={isLoggingIn}
-          className='w-full py-4 bg-primary text-primary-content font-bold rounded-xl
-            hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed
-            transition-all shadow-lg shadow-primary/20 mt-4 active:scale-[0.98]'>
+          className='w-full mt-4'>
           {isLoggingIn ? (
             <div className='flex items-center justify-center gap-2'>
               <Loader className='size-5 animate-spin' />
@@ -129,7 +128,7 @@ const LoginForm = () => {
           ) : (
             'Sign In'
           )}
-        </button>
+        </Button>
       </form>
 
       {/* Footer */}
@@ -139,11 +138,11 @@ const LoginForm = () => {
         </p>
 
         <Link to='/signup' className='block'>
-          <button
-            className='w-full py-3 rounded-xl border border-primary/30 bg-primary/5
-              hover:bg-primary/10 font-bold text-primary transition-all'>
+          <Button
+            variant="outline"
+            className='w-full'>
             Create Account
-          </button>
+          </Button>
         </Link>
       </div>
     </motion.div>

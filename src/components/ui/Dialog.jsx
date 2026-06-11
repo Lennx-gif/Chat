@@ -33,7 +33,7 @@ const DialogContent = React.forwardRef(({ className, children, onOpenChange, ...
       exit={{ opacity: 0, scale: 0.95, y: 15 }}
       transition={{ type: "spring", stiffness: 350, damping: 25 }}
       className={cn(
-        "relative w-full max-w-lg bg-base-100/90 backdrop-blur-2xl border border-base-content/10 rounded-[2.5rem] p-8 shadow-2xl overflow-hidden z-50",
+        "relative w-full max-w-lg bg-base-100/90 backdrop-blur-2xl border border-base-content/10 rounded-[3rem] p-8 shadow-2xl overflow-hidden z-50",
         className
       )}
       {...props}

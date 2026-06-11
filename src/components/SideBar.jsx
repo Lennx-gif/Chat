@@ -6,6 +6,9 @@ import SideBarSkeleton from './skeletons/SideBarSkeleton';
 import { Users, Search, ChevronLeft, Plus, MessageSquare, Compass, UserPlus, UserMinus, X, Check, Globe, User, Settings } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Link } from "react-router-dom";
+import { Input } from "./ui/Input";
+import { Button } from "./ui/Button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "./ui/Dialog";
 
 const SideBar = () => {
   const {
@@ -122,101 +125,85 @@ const SideBar = () => {
   }
 
   return (
-    <aside className={`h-full flex flex-col transition-all duration-500 bg-base-100/10 backdrop-blur-2xl border-r border-base-content/5 relative z-20 pt-4 md:pt-24 w-full ${isCollapsed ? 'md:w-20' : 'md:w-80'} pb-20 md:pb-6`}>
+    <aside className={`h-full flex flex-col transition-all duration-500 bg-base-100/10 backdrop-blur-2xl border-r border-base-content/5 relative z-20 pt-16 md:pt-16 w-full ${isCollapsed ? 'md:w-20' : 'md:w-80'} pb-20 md:pb-6`}>
       {/* Collapse Toggle - hidden on mobile */}
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="hidden md:flex absolute -right-3 top-28 size-6 rounded-full bg-primary text-primary-content items-center justify-center shadow-lg shadow-primary/20 z-30 hover:scale-110 transition-transform"
+        className="hidden md:flex absolute -right-3 top-16 size-6 rounded-full bg-primary text-primary-content items-center justify-center shadow-lg shadow-primary/20 z-30 hover:scale-110 transition-transform"
       >
         <motion.div animate={{ rotate: isCollapsed ? 180 : 0 }}>
           <ChevronLeft size={14} />
         </motion.div>
       </button>
 
-      {/* Header */}
-      <div className="p-6 pb-2">
-        <div className={`flex items-center justify-between mb-6 ${isCollapsed ? 'flex-col gap-4' : ''}`}>
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-inner">
-              <MessageSquare className="w-5 h-5 text-primary" />
+      {/* Sidebar Header & Control Area */}
+      {!isCollapsed && (
+        <div className="p-4 pb-2">
+          {/* Desktop Tabs - hidden on mobile */}
+          {!isDiscoverMode && (
+            <div className="hidden md:flex bg-base-content/5 p-1 rounded-full mb-4">
+              <button 
+                onClick={() => {
+                  setActiveTab("chats");
+                  setSelectedGroup(null);
+                }}
+                className={`flex-1 py-2 rounded-full text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${activeTab === "chats" ? 'bg-base-100 text-base-content shadow-sm' : 'text-base-content/50 hover:text-base-content'}`}
+              >
+                <Users className="size-3.5" />
+                Chats
+              </button>
+              <button 
+                onClick={() => {
+                  setActiveTab("groups");
+                  setSelectedUser(null);
+                }}
+                className={`flex-1 py-2 rounded-full text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${activeTab === "groups" ? 'bg-base-100 text-base-content shadow-sm' : 'text-base-content/50 hover:text-base-content'}`}
+              >
+                <Globe className="size-3.5" />
+                Groups
+              </button>
             </div>
-            {!isCollapsed && (
-              <div>
-                <span className="font-black text-lg tracking-tighter">MESSAGES</span>
-                <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] opacity-70">Workspace</p>
+          )}
+
+          {/* Local Filter/Search with Add icon next to it */}
+          {!isDiscoverMode && (
+            <div className="flex items-center gap-3 mb-2">
+              <div className="relative flex-1">
+                <Input
+                  type="text"
+                  placeholder={activeTab === "chats" ? "Search contacts..." : "Search groups..."}
+                  className="pl-10 h-11"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-base-content/30" />
               </div>
-            )}
-          </div>
-          
-          {/* Top Actions */}
-          {!isCollapsed && (
-            <>
-              {/* Desktop Actions */}
-              <div className="hidden md:flex items-center gap-1">
+
+              {activeTab === "chats" ? (
                 <button 
                   onClick={() => {
-                    setIsDiscoverMode(!isDiscoverMode);
+                    setIsDiscoverMode(true);
                     setDiscoverQuery("");
                     setDiscoverResults([]);
                   }}
-                  className={`size-8 rounded-xl flex items-center justify-center border transition-all ${isDiscoverMode ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-base-content/5 border-transparent hover:bg-base-content/10'}`}
+                  className="size-11 rounded-2xl flex items-center justify-center bg-base-content/5 border border-transparent hover:bg-base-content/10 transition-all text-base-content/65 hover:text-primary active:scale-95 cursor-pointer"
                   title="Discover / Add Contacts"
                 >
-                  <Compass className="size-4" />
+                  <Compass className="size-5" />
                 </button>
-                {activeTab === "groups" && (
-                  <button 
-                    onClick={() => setShowCreateGroupModal(true)}
-                    className="size-8 rounded-xl flex items-center justify-center bg-primary text-primary-content hover:opacity-90 shadow-lg shadow-primary/10 transition-transform active:scale-95"
-                    title="Create New Group"
-                  >
-                    <Plus className="size-4" />
-                  </button>
-                )}
-              </div>
-              
-              {/* Mobile Actions */}
-              <div className="flex md:hidden items-center gap-2">
-                {activeTab === "groups" && !isDiscoverMode && (
-                  <button 
-                    onClick={() => setShowCreateGroupModal(true)}
-                    className="size-8 rounded-xl bg-primary text-primary-content flex items-center justify-center shadow-lg shadow-primary/20 transition-transform active:scale-95"
-                    title="Create New Group"
-                  >
-                    <Plus className="size-4" />
-                  </button>
-                )}
-              </div>
-            </>
+              ) : (
+                <button 
+                  onClick={() => setShowCreateGroupModal(true)}
+                  className="size-11 rounded-2xl flex items-center justify-center bg-primary text-primary-content hover:opacity-90 shadow-lg shadow-primary/10 transition-all active:scale-95 cursor-pointer"
+                  title="Create New Group"
+                >
+                  <Plus className="size-5" />
+                </button>
+              )}
+            </div>
           )}
         </div>
-
-        {/* Tabs - hidden on mobile */}
-        {!isCollapsed && !isDiscoverMode && (
-          <div className="hidden md:flex bg-base-content/5 p-1 rounded-2xl mb-6">
-            <button 
-              onClick={() => {
-                setActiveTab("chats");
-                setSelectedGroup(null);
-              }}
-              className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${activeTab === "chats" ? 'bg-base-100 text-base-content shadow-sm' : 'text-base-content/50 hover:text-base-content'}`}
-            >
-              <Users className="size-3.5" />
-              Chats
-            </button>
-            <button 
-              onClick={() => {
-                setActiveTab("groups");
-                setSelectedUser(null);
-              }}
-              className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${activeTab === "groups" ? 'bg-base-100 text-base-content shadow-sm' : 'text-base-content/50 hover:text-base-content'}`}
-            >
-              <Globe className="size-3.5" />
-              Groups
-            </button>
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Discover Mode View */}
       {isDiscoverMode && !isCollapsed ? (
@@ -235,14 +222,14 @@ const SideBar = () => {
             </button>
           </div>
           <div className="px-6 mb-4 relative">
-            <input
+            <Input
               type="text"
               placeholder="Search platform email or name..."
-              className="w-full bg-base-content/5 border border-base-content/5 rounded-2xl py-3 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-base-content/30 font-medium"
+              className="pl-10 h-11"
               value={discoverQuery}
               onChange={(e) => handlePlatformSearch(e.target.value)}
             />
-            <Search className="absolute left-10 top-1/2 -translate-y-1/2 size-4 text-base-content/30" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-base-content/30" />
           </div>
 
           <div className="flex-1 overflow-y-auto px-6 pb-6 space-y-3 scrollbar-none">
@@ -254,7 +241,7 @@ const SideBar = () => {
               discoverResults.map((result) => {
                 const isConnected = users.some(u => u._id === result._id);
                 return (
-                  <div key={result._id} className="p-3 bg-base-content/5 rounded-[1.25rem] flex items-center justify-between border border-base-content/5">
+                  <div key={result._id} className="p-3 bg-base-content/5 rounded-2xl flex items-center justify-between border border-base-content/5">
                     <div className="flex items-center gap-3 min-w-0">
                       <img 
                         src={result.profilePicture || "/avatar.png"} 
@@ -301,19 +288,6 @@ const SideBar = () => {
       ) : (
         /* Normal Chat / Group View */
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Local Filter/Search */}
-          {!isCollapsed && (
-            <div className="px-6 mb-4 relative">
-              <input
-                type="text"
-                placeholder={activeTab === "chats" ? "Search contacts..." : "Search groups..."}
-                className="w-full bg-base-content/5 border border-base-content/5 rounded-2xl py-3 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-base-content/30 font-medium"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <Search className="absolute left-10 top-1/2 -translate-y-1/2 size-4 text-base-content/30" />
-            </div>
-          )}
 
           {/* Active filter for Chats */}
           {activeTab === "chats" && !isCollapsed && (
@@ -350,7 +324,7 @@ const SideBar = () => {
                     key={user._id}
                     onClick={() => setSelectedUser(user)}
                     className={`
-                      w-full p-3 flex items-center gap-4 rounded-[1.25rem]
+                      w-full p-3 flex items-center gap-4 rounded-3xl
                       transition-all duration-300 group relative overflow-hidden
                       ${selectedUser?._id === user._id 
                         ? "bg-gradient-to-r from-primary/15 to-transparent border border-primary/20 shadow-lg shadow-primary/5" 
@@ -365,11 +339,11 @@ const SideBar = () => {
                     )}
 
                     <div className="relative flex-shrink-0">
-                      <div className={`p-0.5 rounded-[1.2rem] border-2 transition-all duration-300 ${onlineUsers.includes(user._id) ? "border-green-500 animate-glow" : "border-transparent"}`}>
+                      <div className={`p-0.5 rounded-2xl border-2 transition-all duration-300 ${onlineUsers.includes(user._id) ? "border-green-500 animate-glow" : "border-transparent"}`}>
                         <img
                           src={user.profilePicture || "/avatar.png"}
                           alt={user.fullName}
-                          className={`size-11 object-cover rounded-[1rem] transition-all duration-500 ${selectedUser?._id === user._id ? 'scale-105 shadow-md shadow-primary/10' : 'group-hover:scale-105'}`}
+                          className={`size-11 object-cover rounded-2xl transition-all duration-500 ${selectedUser?._id === user._id ? 'scale-105 shadow-md shadow-primary/10' : 'group-hover:scale-105'}`}
                         />
                       </div>
                       {onlineUsers.includes(user._id) && (
@@ -415,7 +389,7 @@ const SideBar = () => {
                     key={group._id}
                     onClick={() => setSelectedGroup(group)}
                     className={`
-                      w-full p-3 flex items-center gap-4 rounded-[1.25rem]
+                      w-full p-3 flex items-center gap-4 rounded-3xl
                       transition-all duration-300 group relative overflow-hidden
                       ${selectedGroup?._id === group._id 
                         ? "bg-gradient-to-r from-primary/15 to-transparent border border-primary/20 shadow-lg shadow-primary/5" 
@@ -433,7 +407,7 @@ const SideBar = () => {
                       <img
                         src={group.avatar || "/group-avatar.png"}
                         alt={group.name}
-                        className={`size-11 object-cover rounded-[1rem] transition-all duration-500 bg-primary/10 ${selectedGroup?._id === group._id ? 'scale-110 shadow-lg shadow-primary/20' : 'group-hover:scale-105'}`}
+                        className={`size-11 object-cover rounded-2xl transition-all duration-500 bg-primary/10 ${selectedGroup?._id === group._id ? 'scale-110 shadow-lg shadow-primary/20' : 'group-hover:scale-105'}`}
                         onError={(e) => {
                           e.target.src = "https://cdn-icons-png.flaticon.com/512/166/166258.png";
                         }}
@@ -485,87 +459,76 @@ const SideBar = () => {
         </div>
       )}
 
-      {/* Create Group Modal Overlay */}
-      {showCreateGroupModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="w-full max-w-md bg-base-100 border border-base-content/10 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden"
-          >
-            <button 
-              onClick={() => setShowCreateGroupModal(false)}
-              className="absolute right-6 top-6 size-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center text-base-content/50 transition-colors"
+      {/* Create Group Dialog Modal */}
+      <Dialog open={showCreateGroupModal} onOpenChange={setShowCreateGroupModal}>
+        <DialogContent>
+          <DialogClose onClick={() => setShowCreateGroupModal(false)} />
+          <DialogHeader>
+            <DialogTitle>Create New Group</DialogTitle>
+            <DialogDescription>Coordinate chats and project details with multiple contacts</DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleCreateGroupSubmit} className="space-y-6 relative z-10">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-base-content/50 block mb-1">Group Name</label>
+              <Input 
+                type="text"
+                placeholder="e.g. Project Collaborators"
+                value={groupName}
+                onChange={(e) => setGroupName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-base-content/50 block mb-1">Description</label>
+              <textarea 
+                placeholder="What is this group for?"
+                className="w-full bg-base-content/5 border border-base-content/5 rounded-[1.75rem] py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-semibold h-20 resize-none placeholder:text-base-content/30"
+                value={groupDesc}
+                onChange={(e) => setGroupDesc(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-base-content/50 block mb-1">Select Members</label>
+              <div className="max-h-40 overflow-y-auto space-y-2 pr-2 scrollbar-thin">
+                {users.length > 0 ? (
+                  users.filter(u => u._id !== authUser._id).map((contact) => (
+                    <label 
+                      key={contact._id}
+                      className={`flex items-center justify-between p-3 rounded-2xl cursor-pointer hover:bg-base-content/5 transition-colors border ${selectedMembers.includes(contact._id) ? 'border-primary/30 bg-primary/5' : 'border-transparent'}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <img src={contact.profilePicture || "/avatar.png"} alt={contact.fullName} className="size-8 object-cover rounded-xl" />
+                        <span className="font-bold text-sm">{contact.fullName}</span>
+                      </div>
+                      <input 
+                        type="checkbox"
+                        checked={selectedMembers.includes(contact._id)}
+                        onChange={() => toggleMemberSelection(contact._id)}
+                        className="checkbox checkbox-sm checkbox-primary rounded-md"
+                      />
+                    </label>
+                  ))
+                ) : (
+                  <div className="text-xs text-base-content/30 italic py-2">
+                    Connect with contacts first to add them to a group
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <Button 
+              type="submit"
+              disabled={!groupName.trim()}
+              className="w-full h-12 mt-4"
             >
-              <X className="size-4" />
-            </button>
-            
-            <h3 className="text-xl font-black mb-6 tracking-tight">CREATE NEW GROUP</h3>
-            
-            <form onSubmit={handleCreateGroupSubmit} className="space-y-4">
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-base-content/50 mb-2 block">Group Name</label>
-                <input 
-                  type="text"
-                  placeholder="e.g. Project Collaborators"
-                  className="w-full bg-base-content/5 border border-base-content/5 rounded-2xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-semibold"
-                  value={groupName}
-                  onChange={(e) => setGroupName(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-base-content/50 mb-2 block">Description</label>
-                <textarea 
-                  placeholder="What is this group for?"
-                  className="w-full bg-base-content/5 border border-base-content/5 rounded-2xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-semibold h-20 resize-none"
-                  value={groupDesc}
-                  onChange={(e) => setGroupDesc(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-base-content/50 mb-2 block">Select Members</label>
-                <div className="max-h-40 overflow-y-auto space-y-2 pr-2 scrollbar-thin">
-                  {users.length > 0 ? (
-                    users.filter(u => u._id !== authUser._id).map((contact) => (
-                      <label 
-                        key={contact._id}
-                        className={`flex items-center justify-between p-3 rounded-2xl cursor-pointer hover:bg-base-content/5 transition-colors border ${selectedMembers.includes(contact._id) ? 'border-primary/30 bg-primary/5' : 'border-transparent'}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <img src={contact.profilePicture || "/avatar.png"} alt={contact.fullName} className="size-8 object-cover rounded-xl" />
-                          <span className="font-bold text-sm">{contact.fullName}</span>
-                        </div>
-                        <input 
-                          type="checkbox"
-                          checked={selectedMembers.includes(contact._id)}
-                          onChange={() => toggleMemberSelection(contact._id)}
-                          className="checkbox checkbox-sm checkbox-primary rounded-md"
-                        />
-                      </label>
-                    ))
-                  ) : (
-                    <div className="text-xs text-base-content/30 italic py-2">
-                      Connect with contacts first to add them to a group
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <button 
-                type="submit"
-                disabled={!groupName.trim()}
-                className="w-full py-4 bg-primary text-primary-content font-bold rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-primary/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Create Group ({selectedMembers.length + 1} members)
-              </button>
-            </form>
-          </motion.div>
-        </div>
-      )}
+              Create Group ({selectedMembers.length + 1} members)
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </aside>
   );
 };

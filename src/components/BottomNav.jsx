@@ -84,7 +84,7 @@ const BottomNav = () => {
 
   return (
     <div className="md:hidden fixed bottom-4 left-4 right-4 z-40 max-w-md mx-auto">
-      <div className="relative flex items-center justify-around py-2 px-3 bg-base-100/35 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_8px_32px_rgba(0,0,0,0.24)] overflow-hidden">
+      <div className="relative flex items-center justify-around py-2 px-3 bg-base-100/35 backdrop-blur-2xl border border-white/10 rounded-full shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_8px_32px_rgba(0,0,0,0.24)] overflow-hidden">
         {/* Liquid glass glossy sheen */}
         <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
         
@@ -94,13 +94,13 @@ const BottomNav = () => {
             <button
               key={tab.id}
               onClick={tab.onClick}
-              className="relative flex flex-col items-center justify-center py-2 px-3.5 rounded-2xl transition-all duration-300 active:scale-95"
+              className="relative flex flex-col items-center justify-center py-2 px-3.5 rounded-full transition-all duration-300 active:scale-95"
             >
               {/* Liquid glass active indicator pill */}
               {tab.isActive && (
                 <motion.div
                   layoutId="liquid-glass-pill"
-                  className="absolute inset-0 bg-gradient-to-br from-primary/25 via-primary/15 to-primary/5 border border-primary/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_4px_12px_rgba(0,0,0,0.15)] rounded-2xl z-0"
+                  className="absolute inset-0 bg-gradient-to-br from-primary/25 via-primary/15 to-primary/5 border border-primary/25 shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_4px_12px_rgba(0,0,0,0.15)] rounded-full z-0"
                   transition={{
                     type: "spring",
                     stiffness: 380,
@@ -108,7 +108,7 @@ const BottomNav = () => {
                   }}
                 >
                   {/* Gloss reflection highlight inside active pill */}
-                  <div className="absolute inset-x-0 top-0 h-1/2 bg-white/10 rounded-t-2xl" />
+                  <div className="absolute inset-x-0 top-0 h-1/2 bg-white/10 rounded-t-full" />
                 </motion.div>
               )}
               
