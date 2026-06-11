@@ -4,7 +4,7 @@ import ChatWindow from '../components/ChatWindow.jsx';
 import NoChat from '../components/NoChat';
 const HomePage = () => {
 
-  const {selectedUser} = useChatStore(); 
+  const { selectedUser, selectedGroup } = useChatStore(); 
   return (
     <div className="h-screen bg-base-200 relative overflow-hidden flex flex-col">
       {/* Background Decorative Elements */}
@@ -17,7 +17,7 @@ const HomePage = () => {
         <div className="w-full h-full flex overflow-hidden">
           <SideBar/>
           <main className="flex-1 flex flex-col overflow-hidden">
-            {!selectedUser ? <NoChat/> : <ChatWindow/>}
+            {(!selectedUser && !selectedGroup) ? <NoChat/> : <ChatWindow/>}
           </main>
         </div>
       </div>

@@ -1,11 +1,28 @@
-import { X, Phone, Video, MoreVertical } from "lucide-react";
+import { X, Phone, Video, MoreVertical, Shield } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import { motion } from "motion/react";
 
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser } = useChatStore();
+  const { selectedUser, setSelectedUser, selectedGroup, setSelectedGroup } = useChatStore();
   const { onlineUsers } = useAuthStore();
+
+  const activeTarget = selectedUser || selectedGroup;
+  if (!activeTarget) return null;
+
+  const isGroup = !!selectedGroup;
+  const name = isGroup ? selectedGroup.name : selectedUser.fullName;
+  const avatar = isGroup ? (selectedGroup.avatar || "/group-avatar.png") : (selectedUser.profilePicture || "/avatar.png");
+  const isOnline = isGroup ? false : onlineUsers.includes(selectedUser._id);
+  const statusText = isGroup ? `${selectedGroup.members.length} Members` : (isOnline ? "Active" : "Offline");
+
+  const handleClose = () => {
+    if (isGroup) {
+      setSelectedGroup(null);
+    } else {
+      setSelectedUser(null);
+    }
+  };
 
   return (
     <motion.div 
@@ -17,25 +34,38 @@ const ChatHeader = () => {
         <div className="flex items-center gap-5">
           {/* Avatar */}
           <div className="relative group">
-            <div className="size-14 rounded-[1.5rem] overflow-hidden border-2 border-primary/20 group-hover:border-primary/40 transition-colors shadow-lg">
+            <div className="size-14 rounded-[1.5rem] overflow-hidden border-2 border-primary/20 group-hover:border-primary/40 transition-colors shadow-lg bg-base-content/5">
               <img 
-                src={selectedUser.profilePicture || "/avatar.png"} 
-                alt={selectedUser.fullName} 
+                src={avatar} 
+                alt={name} 
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                onError={(e) => {
+                  if (isGroup) {
+                    e.target.src = "https://cdn-icons-png.flaticon.com/512/166/166258.png";
+                  }
+                }}
               />
             </div>
-            {onlineUsers.includes(selectedUser._id) && (
+            {!isGroup && isOnline && (
               <span className="absolute -bottom-1 -right-1 size-4 bg-green-500 rounded-full ring-4 ring-base-100 shadow-sm" />
             )}
           </div>
 
-          {/* User info */}
+          {/* Chat Target Info */}
           <div>
-            <h3 className="font-black text-xl text-base-content tracking-tight">{selectedUser.fullName}</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="font-black text-xl text-base-content tracking-tight">{name}</h3>
+              {/* E2EE Indicator */}
+              <div className="tooltip tooltip-bottom flex items-center justify-center text-success bg-success/10 p-1 rounded-md" data-tip="End-to-End Encrypted via AES-GCM">
+                <Shield size={12} className="stroke-[3]" />
+              </div>
+            </div>
             <div className="flex items-center gap-2 mt-0.5">
-              <div className={`size-1.5 rounded-full ${onlineUsers.includes(selectedUser._id) ? "bg-green-500 animate-pulse" : "bg-base-content/20"}`} />
+              {!isGroup && (
+                <div className={`size-1.5 rounded-full ${isOnline ? "bg-green-500 animate-pulse" : "bg-base-content/20"}`} />
+              )}
               <p className="text-[10px] font-black text-primary/60 uppercase tracking-[0.2em]">
-                {onlineUsers.includes(selectedUser._id) ? "Connected" : "Disconnected"}
+                {statusText}
               </p>
             </div>
           </div>
@@ -47,7 +77,7 @@ const ChatHeader = () => {
           </button>
           <div className="w-px h-8 bg-base-content/5 mx-1" />
           <button 
-            onClick={() => setSelectedUser(null)}
+            onClick={handleClose}
             className="size-10 rounded-2xl bg-base-content/5 text-base-content/40 hover:bg-error/10 hover:text-error flex items-center justify-center transition-all group"
           >
             <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />

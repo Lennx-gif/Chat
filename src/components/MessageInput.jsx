@@ -1,15 +1,15 @@
 import React from 'react'
-import { useState,useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Image, Send, X, Smile, Paperclip } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useChatStore } from '../store/useChatStore';
 import { motion, AnimatePresence } from 'motion/react';
 
 const MessageInput = () => {
-  const [text,setText] = useState("");
-  const [imagePreview,setImagePreview] = useState(null);
+  const [text, setText] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
-  const { sendMessage } = useChatStore();
+  const { sendMessage, sendGroupMessage, selectedGroup } = useChatStore();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -38,28 +38,33 @@ const MessageInput = () => {
   const handleSendMessage = async (e) => {
     e.preventDefault();
     
-    // Validate input - prevent empty text and image messages
     if (!text.trim() && !imagePreview) {
       toast.error("Message cannot be empty");
       return;
     }
 
-    // Prevent message spam - text too long
     if (text.length > 5000) {
       toast.error("Message is too long (max 5000 characters)");
       return;
     }
 
     try {
-      await sendMessage({
-        text: text.trim(),
-        image: imagePreview,
-      });
+      if (selectedGroup) {
+        await sendGroupMessage({
+          text: text.trim(),
+          image: imagePreview,
+        });
+      } else {
+        await sendMessage({
+          text: text.trim(),
+          image: imagePreview,
+        });
+      }
 
       // Clear form
       setText("");
       setImagePreview(null);
-      if(fileInputRef.current) fileInputRef.current.value = "";
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       console.error("Failed to send message:", error);
     }
@@ -67,9 +72,8 @@ const MessageInput = () => {
 
   const removeMessageImage = () => {
     setImagePreview(null);
-    if(fileInputRef.current) fileInputRef.current.value = "";
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
-
 
   return (
     <div className="p-4 w-full bg-base-100/30 backdrop-blur-md border-t border-base-content/10">
@@ -146,6 +150,7 @@ const MessageInput = () => {
         </motion.button>
       </form>
     </div>
-  );};
+  );
+};
 
 export default MessageInput;
