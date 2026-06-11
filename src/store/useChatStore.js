@@ -15,6 +15,10 @@ export const useChatStore = create((set, get) => ({
     isLoadingGroups: false,
     filter: "",
     setFilter: (value) => set({ filter: value }),
+    activeTab: "chats",
+    isDiscoverMode: false,
+    setActiveTab: (activeTab) => set({ activeTab }),
+    setIsDiscoverMode: (isDiscoverMode) => set({ isDiscoverMode }),
 
     getUsers: async () => {
         set({ isLoadingUsers: true });

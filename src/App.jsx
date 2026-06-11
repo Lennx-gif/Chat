@@ -6,6 +6,8 @@ import LoginPage from "./pages/LoginPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import { useAuthStore } from "./store/useAuthStore.js";
+import { useChatStore } from "./store/useChatStore.js";
+import BottomNav from "./components/BottomNav.jsx";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
 import { Navigate } from "react-router-dom";
@@ -15,6 +17,7 @@ import { useThemeStore } from "./store/useThemeStore.js";
 
 const App = () => {
   const {authUser,checkAuth,isCheckingAuth} = useAuthStore();
+  const {selectedUser, selectedGroup} = useChatStore();
 
   const {theme} = useThemeStore();
   useEffect(() => {
@@ -30,12 +33,14 @@ const App = () => {
     );
   }
 
+  const isChatOpen = selectedUser || selectedGroup;
+
   return (
     <div data-theme={theme} className="min-h-screen bg-base-100 flex flex-col">
-      <div className="hidden md:block">
+      <div className={`${isChatOpen ? "hidden md:block" : "block"}`}>
         <AppHeader />
       </div>
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0 pb-20 md:pb-0">
         <Routes>
         <Route path="/" element={ authUser ? <HomePage/> : <Navigate to="/login"/>}/>
         <Route path="/signup" element={!authUser ? <SignUpPage/>: <Navigate to="/"/>}/>
@@ -45,6 +50,7 @@ const App = () => {
 
       </Routes>
       </div>
+      {authUser && <BottomNav />}
       <Toaster/>
     </div>
     

@@ -29,16 +29,8 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-base-200/50 backdrop-blur-xl relative overflow-y-auto pb-10">
-      {/* Mobile Header Back Button */}
-      <div className="flex md:hidden items-center gap-4 mb-4 px-4 py-3 border-b border-base-content/5 bg-base-100/30 backdrop-blur-md sticky top-0 z-30">
-        <Link to="/" className="size-10 flex items-center justify-center rounded-2xl bg-base-content/5 text-base-content/60 hover:bg-base-content/10 transition-all">
-          <ArrowLeft className="size-5" />
-        </Link>
-        <span className="font-black uppercase tracking-wider text-xs text-base-content/70">Back to Chats</span>
-      </div>
-
-      <div className="max-w-2xl mx-auto p-4 py-8 md:pt-28">
+    <div className="min-h-screen bg-base-200/50 backdrop-blur-xl relative overflow-y-auto pb-24 md:pb-10 pt-16 md:pt-28">
+      <div className="max-w-2xl mx-auto p-4">
         <Card className="border border-base-content/5 mb-8">
           <CardHeader className="text-center md:text-left">
             <CardTitle className="text-2xl font-black">Profile</CardTitle>

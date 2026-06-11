@@ -22,17 +22,19 @@ const SideBar = () => {
     searchUsersOnPlatform,
     connectUser,
     disconnectUser,
-    createGroup
+    createGroup,
+    activeTab,
+    setActiveTab,
+    isDiscoverMode,
+    setIsDiscoverMode
   } = useChatStore();
 
   const { onlineUsers, authUser } = useAuthStore();
-  const [activeTab, setActiveTab] = useState("chats"); // "chats" | "groups"
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
   
   // Discover mode states
-  const [isDiscoverMode, setIsDiscoverMode] = useState(false);
   const [discoverQuery, setDiscoverQuery] = useState("");
   const [discoverResults, setDiscoverResults] = useState([]);
   const [isSearchingPlatform, setIsSearchingPlatform] = useState(false);
@@ -564,62 +566,6 @@ const SideBar = () => {
           </motion.div>
         </div>
       )}
-      {/* Mobile Bottom Navigation Bar */}
-      <div className="flex md:hidden fixed bottom-0 left-0 right-0 h-16 bg-base-100/70 backdrop-blur-xl border-t border-base-content/5 z-30 justify-around items-center px-4 pb-[env(safe-area-inset-bottom,0px)]">
-        <button 
-          onClick={() => {
-            setIsDiscoverMode(false);
-            setActiveTab("chats");
-            setDiscoverQuery("");
-            setDiscoverResults([]);
-          }}
-          className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-300 ${!isDiscoverMode && activeTab === "chats" ? "text-primary scale-110" : "text-base-content/50"}`}
-        >
-          <Users className="size-5" />
-          <span className="text-[9px] font-black uppercase tracking-wider">Chats</span>
-        </button>
-
-        <button 
-          onClick={() => {
-            setIsDiscoverMode(false);
-            setActiveTab("groups");
-            setDiscoverQuery("");
-            setDiscoverResults([]);
-          }}
-          className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-300 ${!isDiscoverMode && activeTab === "groups" ? "text-primary scale-110" : "text-base-content/50"}`}
-        >
-          <Globe className="size-5" />
-          <span className="text-[9px] font-black uppercase tracking-wider">Groups</span>
-        </button>
-
-        <button 
-          onClick={() => {
-            setIsDiscoverMode(true);
-            setDiscoverQuery("");
-            setDiscoverResults([]);
-          }}
-          className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-300 ${isDiscoverMode ? "text-primary scale-110" : "text-base-content/50"}`}
-        >
-          <Compass className="size-5" />
-          <span className="text-[9px] font-black uppercase tracking-wider">Discover</span>
-        </button>
-
-        <Link 
-          to="/profile"
-          className="flex flex-col items-center justify-center gap-0.5 text-base-content/50 hover:text-primary transition-all duration-300"
-        >
-          <User className="size-5" />
-          <span className="text-[9px] font-black uppercase tracking-wider">Profile</span>
-        </Link>
-
-        <Link 
-          to="/settings"
-          className="flex flex-col items-center justify-center gap-0.5 text-base-content/50 hover:text-primary transition-all duration-300"
-        >
-          <Settings className="size-5" />
-          <span className="text-[9px] font-black uppercase tracking-wider">Settings</span>
-        </Link>
-      </div>
     </aside>
   );
 };
