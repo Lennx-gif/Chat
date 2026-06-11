@@ -3,8 +3,9 @@ import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { useEffect, useRef, useState } from "react";
 import SideBarSkeleton from './skeletons/SideBarSkeleton';
-import { Users, Search, ChevronLeft, Plus, MessageSquare, Compass, UserPlus, UserMinus, X, Check, Globe } from "lucide-react";
+import { Users, Search, ChevronLeft, Plus, MessageSquare, Compass, UserPlus, UserMinus, X, Check, Globe, User, Settings } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { Link } from "react-router-dom";
 
 const SideBar = () => {
   const {
@@ -119,11 +120,11 @@ const SideBar = () => {
   }
 
   return (
-    <aside className={`h-full flex flex-col transition-all duration-500 bg-base-100/10 backdrop-blur-2xl border-r border-base-content/5 relative z-20 pt-24 ${isCollapsed ? 'w-20' : 'w-80'}`}>
-      {/* Collapse Toggle */}
+    <aside className={`h-full flex flex-col transition-all duration-500 bg-base-100/10 backdrop-blur-2xl border-r border-base-content/5 relative z-20 pt-4 md:pt-24 w-full ${isCollapsed ? 'md:w-20' : 'md:w-80'} pb-20 md:pb-6`}>
+      {/* Collapse Toggle - hidden on mobile */}
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-28 size-6 rounded-full bg-primary text-primary-content flex items-center justify-center shadow-lg shadow-primary/20 z-30 hover:scale-110 transition-transform"
+        className="hidden md:flex absolute -right-3 top-28 size-6 rounded-full bg-primary text-primary-content items-center justify-center shadow-lg shadow-primary/20 z-30 hover:scale-110 transition-transform"
       >
         <motion.div animate={{ rotate: isCollapsed ? 180 : 0 }}>
           <ChevronLeft size={14} />
@@ -147,34 +148,50 @@ const SideBar = () => {
           
           {/* Top Actions */}
           {!isCollapsed && (
-            <div className="flex items-center gap-1">
-              <button 
-                onClick={() => {
-                  setIsDiscoverMode(!isDiscoverMode);
-                  setDiscoverQuery("");
-                  setDiscoverResults([]);
-                }}
-                className={`size-8 rounded-xl flex items-center justify-center border transition-all ${isDiscoverMode ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-base-content/5 border-transparent hover:bg-base-content/10'}`}
-                title="Discover / Add Contacts"
-              >
-                <Compass className="size-4" />
-              </button>
-              {activeTab === "groups" && (
+            <>
+              {/* Desktop Actions */}
+              <div className="hidden md:flex items-center gap-1">
                 <button 
-                  onClick={() => setShowCreateGroupModal(true)}
-                  className="size-8 rounded-xl flex items-center justify-center bg-primary text-primary-content hover:opacity-90 shadow-lg shadow-primary/10 transition-transform active:scale-95"
-                  title="Create New Group"
+                  onClick={() => {
+                    setIsDiscoverMode(!isDiscoverMode);
+                    setDiscoverQuery("");
+                    setDiscoverResults([]);
+                  }}
+                  className={`size-8 rounded-xl flex items-center justify-center border transition-all ${isDiscoverMode ? 'bg-primary/20 border-primary/30 text-primary' : 'bg-base-content/5 border-transparent hover:bg-base-content/10'}`}
+                  title="Discover / Add Contacts"
                 >
-                  <Plus className="size-4" />
+                  <Compass className="size-4" />
                 </button>
-              )}
-            </div>
+                {activeTab === "groups" && (
+                  <button 
+                    onClick={() => setShowCreateGroupModal(true)}
+                    className="size-8 rounded-xl flex items-center justify-center bg-primary text-primary-content hover:opacity-90 shadow-lg shadow-primary/10 transition-transform active:scale-95"
+                    title="Create New Group"
+                  >
+                    <Plus className="size-4" />
+                  </button>
+                )}
+              </div>
+              
+              {/* Mobile Actions */}
+              <div className="flex md:hidden items-center gap-2">
+                {activeTab === "groups" && !isDiscoverMode && (
+                  <button 
+                    onClick={() => setShowCreateGroupModal(true)}
+                    className="size-8 rounded-xl bg-primary text-primary-content flex items-center justify-center shadow-lg shadow-primary/20 transition-transform active:scale-95"
+                    title="Create New Group"
+                  >
+                    <Plus className="size-4" />
+                  </button>
+                )}
+              </div>
+            </>
           )}
         </div>
 
-        {/* Tabs */}
+        {/* Tabs - hidden on mobile */}
         {!isCollapsed && !isDiscoverMode && (
-          <div className="flex bg-base-content/5 p-1 rounded-2xl mb-6">
+          <div className="hidden md:flex bg-base-content/5 p-1 rounded-2xl mb-6">
             <button 
               onClick={() => {
                 setActiveTab("chats");
@@ -346,15 +363,17 @@ const SideBar = () => {
                     )}
 
                     <div className="relative flex-shrink-0">
-                      <img
-                        src={user.profilePicture || "/avatar.png"}
-                        alt={user.fullName}
-                        className={`size-11 object-cover rounded-[1rem] transition-all duration-500 ${selectedUser?._id === user._id ? 'scale-110 shadow-lg shadow-primary/20' : 'group-hover:scale-105'}`}
-                      />
+                      <div className={`p-0.5 rounded-[1.2rem] border-2 transition-all duration-300 ${onlineUsers.includes(user._id) ? "border-green-500 animate-glow" : "border-transparent"}`}>
+                        <img
+                          src={user.profilePicture || "/avatar.png"}
+                          alt={user.fullName}
+                          className={`size-11 object-cover rounded-[1rem] transition-all duration-500 ${selectedUser?._id === user._id ? 'scale-105 shadow-md shadow-primary/10' : 'group-hover:scale-105'}`}
+                        />
+                      </div>
                       {onlineUsers.includes(user._id) && (
                         <span
-                          className="absolute -bottom-1 -right-1 size-3.5 bg-green-500 
-                          rounded-full ring-4 ring-base-100 shadow-sm"
+                          className="absolute -bottom-0.5 -right-0.5 size-3 bg-green-500 
+                          rounded-full ring-2 ring-base-100 shadow-sm"
                         />
                       )}
                     </div>
@@ -545,6 +564,62 @@ const SideBar = () => {
           </motion.div>
         </div>
       )}
+      {/* Mobile Bottom Navigation Bar */}
+      <div className="flex md:hidden fixed bottom-0 left-0 right-0 h-16 bg-base-100/70 backdrop-blur-xl border-t border-base-content/5 z-30 justify-around items-center px-4 pb-[env(safe-area-inset-bottom,0px)]">
+        <button 
+          onClick={() => {
+            setIsDiscoverMode(false);
+            setActiveTab("chats");
+            setDiscoverQuery("");
+            setDiscoverResults([]);
+          }}
+          className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-300 ${!isDiscoverMode && activeTab === "chats" ? "text-primary scale-110" : "text-base-content/50"}`}
+        >
+          <Users className="size-5" />
+          <span className="text-[9px] font-black uppercase tracking-wider">Chats</span>
+        </button>
+
+        <button 
+          onClick={() => {
+            setIsDiscoverMode(false);
+            setActiveTab("groups");
+            setDiscoverQuery("");
+            setDiscoverResults([]);
+          }}
+          className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-300 ${!isDiscoverMode && activeTab === "groups" ? "text-primary scale-110" : "text-base-content/50"}`}
+        >
+          <Globe className="size-5" />
+          <span className="text-[9px] font-black uppercase tracking-wider">Groups</span>
+        </button>
+
+        <button 
+          onClick={() => {
+            setIsDiscoverMode(true);
+            setDiscoverQuery("");
+            setDiscoverResults([]);
+          }}
+          className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-300 ${isDiscoverMode ? "text-primary scale-110" : "text-base-content/50"}`}
+        >
+          <Compass className="size-5" />
+          <span className="text-[9px] font-black uppercase tracking-wider">Discover</span>
+        </button>
+
+        <Link 
+          to="/profile"
+          className="flex flex-col items-center justify-center gap-0.5 text-base-content/50 hover:text-primary transition-all duration-300"
+        >
+          <User className="size-5" />
+          <span className="text-[9px] font-black uppercase tracking-wider">Profile</span>
+        </Link>
+
+        <Link 
+          to="/settings"
+          className="flex flex-col items-center justify-center gap-0.5 text-base-content/50 hover:text-primary transition-all duration-300"
+        >
+          <Settings className="size-5" />
+          <span className="text-[9px] font-black uppercase tracking-wider">Settings</span>
+        </Link>
+      </div>
     </aside>
   );
 };

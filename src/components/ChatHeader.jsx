@@ -1,4 +1,4 @@
-import { X, Phone, Video, MoreVertical, Shield } from "lucide-react";
+import { X, Phone, Video, MoreVertical, Shield, ArrowLeft } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import { motion } from "motion/react";
@@ -28,10 +28,17 @@ const ChatHeader = () => {
     <motion.div 
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-6 border-b border-base-content/5 bg-base-100/10 backdrop-blur-xl relative z-20"
+      className="p-4 md:p-6 border-b border-base-content/5 bg-base-100/10 backdrop-blur-xl relative z-20"
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3 md:gap-5">
+          {/* Mobile Back Button */}
+          <button
+            onClick={handleClose}
+            className="flex md:hidden size-10 rounded-2xl bg-base-content/5 text-base-content/60 hover:bg-base-content/10 items-center justify-center transition-all mr-1"
+          >
+            <ArrowLeft size={18} />
+          </button>
           {/* Avatar */}
           <div className="relative group">
             <div className="size-14 rounded-[1.5rem] overflow-hidden border-2 border-primary/20 group-hover:border-primary/40 transition-colors shadow-lg bg-base-content/5">

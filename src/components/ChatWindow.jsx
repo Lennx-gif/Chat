@@ -51,7 +51,7 @@ const ChatWindow = () => {
 
   if (isLoadingMessages) {
     return (
-      <div className='flex-1 flex flex-col overflow-auto bg-gradient-to-b from-base-100/5 via-base-100/10 to-base-100/5 backdrop-blur-md pt-24'>
+      <div className='flex-1 flex flex-col overflow-auto bg-gradient-to-b from-base-100/5 via-base-100/10 to-base-100/5 backdrop-blur-md pt-0 md:pt-24'>
         <ChatHeader />
         <MessageSkeleton />
         <MessageInput />
@@ -60,7 +60,7 @@ const ChatWindow = () => {
   }
 
   return (
-    <div className='flex-1 flex flex-col overflow-hidden bg-gradient-to-b from-base-100/5 via-base-100/10 to-base-100/5 backdrop-blur-xl relative pt-24'>
+    <div className='flex-1 flex flex-col overflow-hidden bg-gradient-to-b from-base-100/5 via-base-100/10 to-base-100/5 backdrop-blur-xl relative pt-0 md:pt-24'>
       <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
       
       <ChatHeader />

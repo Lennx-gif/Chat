@@ -15,9 +15,14 @@ const HomePage = () => {
 
       <div className="flex-1 flex overflow-hidden relative z-10" >
         <div className="w-full h-full flex overflow-hidden">
-          <SideBar/>
-          <main className="flex-1 flex flex-col overflow-hidden">
-            {(!selectedUser && !selectedGroup) ? <NoChat/> : <ChatWindow/>}
+          {/* Sidebar wrapper: hidden on mobile when a conversation is selected */}
+          <div className={`h-full md:block flex-shrink-0 ${ (selectedUser || selectedGroup) ? "hidden" : "w-full" } md:w-auto`}>
+            <SideBar />
+          </div>
+
+          {/* Chat area wrapper: hidden on mobile when no conversation is selected */}
+          <main className={`flex-1 flex flex-col overflow-hidden h-full ${ !(selectedUser || selectedGroup) ? "hidden md:flex" : "flex" }`}>
+            {(!selectedUser && !selectedGroup) ? <NoChat /> : <ChatWindow />}
           </main>
         </div>
       </div>

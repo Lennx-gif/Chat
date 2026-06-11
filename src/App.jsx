@@ -31,9 +31,12 @@ const App = () => {
   }
 
   return (
-    <div data-theme={theme}>
-      <AppHeader />
-      <Routes>
+    <div data-theme={theme} className="min-h-screen bg-base-100 flex flex-col">
+      <div className="hidden md:block">
+        <AppHeader />
+      </div>
+      <div className="flex-1 flex flex-col min-h-0">
+        <Routes>
         <Route path="/" element={ authUser ? <HomePage/> : <Navigate to="/login"/>}/>
         <Route path="/signup" element={!authUser ? <SignUpPage/>: <Navigate to="/"/>}/>
         <Route path="/login" element={!authUser ? <LoginPage/> : <Navigate to="/"/>}/>
@@ -41,6 +44,7 @@ const App = () => {
         <Route path="/profile" element={authUser ? <ProfilePage/> : <Navigate to="/login"/>}/>
 
       </Routes>
+      </div>
       <Toaster/>
     </div>
     
